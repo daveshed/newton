@@ -2,6 +2,7 @@ import collections
 import struct
 import time
 
+import matplotlib.pyplot as plt
 import pyftdi.serialext
 
 PORT = 'ftdi://ftdi:232h:1/1'
@@ -19,6 +20,8 @@ MyData = collections.namedtuple(
         'checksum',
     ],
 )
+X_DATA = []
+Y_DATA = []
 
 def checksum(chunk):
     result = 0
@@ -33,6 +36,8 @@ def handle_chunk(chunk):
     print(data)
     if checksum(chunk) != data.checksum:
         raise AssertionError("Data corruption")
+    X_DATA.append(data.timestamp)
+    Y_DATA.append(data.channel_a)
 
 def consume(queue):
     if len(queue) >= CHUNK_SIZE:
@@ -60,3 +65,5 @@ except KeyboardInterrupt:
     print("Quitting...")
 finally:
     device.close()
+plt.scatter(X_DATA, Y_DATA)
+plt.show()
