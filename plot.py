@@ -20,4 +20,7 @@ def read_file(fn):
 for fn in sys.argv[1:]:
     data = read_file(fn)
     plt.plot(data[0], data[1], 'o:', label=fn)
+plt.legend()
+fig = plt.gcf()
+fig.tight_layout()
 plt.show()
