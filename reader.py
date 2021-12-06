@@ -1,6 +1,7 @@
 import collections
 import struct
 import time
+import sys
 
 import matplotlib.pyplot as plt
 import pyftdi.serialext
@@ -46,24 +47,41 @@ def consume(queue):
         return queue[CHUNK_SIZE:]
     return queue
 
-# non-blocking
-device = pyftdi.serialext.serial_for_url(PORT, baudrate=BAUD, timeout=0)
-device.open()
-# clear the input buffer...
-print("Clearing buffer...")
-while device.read():
-    pass
 
-queue = b''
+def main(argv: list = None):
+    if argv is None:
+        argv = sys.argv[1:]
+    try:
+        [filename] = argv
+    except:
+        filename = 'testing.csv'
+    
+    # non-blocking
+    device = pyftdi.serialext.serial_for_url(PORT, baudrate=BAUD, timeout=0)
+    device.open()
+    # clear the input buffer...
+    print("Clearing buffer...")
+    while device.read():
+        pass
 
-try:
-    print("Listening...")
-    while True:
-        queue += device.read(BUFFER_SIZE)
-        queue = consume(queue)
-except KeyboardInterrupt:
-    print("Quitting...")
-finally:
-    device.close()
-plt.scatter(X_DATA, Y_DATA)
-plt.show()
+    queue = b''
+
+    try:
+        print("Listening...")
+        while True:
+            queue += device.read(BUFFER_SIZE)
+            queue = consume(queue)
+    except KeyboardInterrupt:
+        print("Quitting...")
+    finally:
+        device.close()
+    plt.scatter(X_DATA, Y_DATA)
+    plt.show()
+    with open(filename, 'w') as f:
+        for x, y in zip(X_DATA, Y_DATA):
+            f.write(f"{x}\t{y}\n")
+    
+
+
+if __name__ == '__main__':
+    main()
