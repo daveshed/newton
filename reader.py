@@ -64,9 +64,14 @@ def worker(condition):
         device.close()
 
 def animate(_):
-    data = QUEUE.get()
-    X_DATA.append(data.timestamp)
-    Y_DATA.append(data.channel_a)
+    while True:
+        try:
+            data = QUEUE.get(block=False)
+            seconds, mass = calibrate(data)
+            X_DATA.append(seconds)
+            Y_DATA.append(mass)
+        except queue.Empty:
+            break
     plt.cla()
     plt.plot(X_DATA[-100:], Y_DATA[-100:])
 
@@ -91,7 +96,7 @@ def main(argv: list = None):
     thread = threading.Thread(target=worker, args=(run.is_set,))
     thread.start()
     # to quit the animation, press 'q'.
-    animation = FuncAnimation(plt.gcf(), animate, interval=1)
+    animation = FuncAnimation(plt.gcf(), animate, interval=100)
     plt.show()
     try:
         while True:
