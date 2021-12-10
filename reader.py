@@ -1,9 +1,12 @@
 import collections
+import queue
 import struct
-import time
 import sys
+import threading
+import time
 
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 import pyftdi.serialext
 
 PORT = 'ftdi://ftdi:232h:1/1'
@@ -21,6 +24,7 @@ MyData = collections.namedtuple(
         'checksum',
     ],
 )
+QUEUE = queue.Queue()
 X_DATA = []
 Y_DATA = []
 
@@ -32,20 +36,46 @@ def checksum(chunk):
     return result
 
 def handle_chunk(chunk):
-    print(chunk)
     data = MyData(*struct.unpack(FORMAT, chunk))
-    print(data)
     if checksum(chunk) != data.checksum:
         raise AssertionError("Data corruption")
+    QUEUE.put(data)
+
+
+def worker(condition):
+    device = pyftdi.serialext.serial_for_url(PORT, baudrate=BAUD, timeout=0)
+    device.open()
+    # clear the input buffer...
+    print("Clearing buffer...")
+    while device.read():
+        pass
+    print("Listening...")
+    data = b''
+    try:
+        while condition():
+            data += device.read(BUFFER_SIZE)
+            if len(data) >= CHUNK_SIZE:
+                chunk = data[:CHUNK_SIZE]
+                handle_chunk(chunk)
+                data = data[CHUNK_SIZE:]
+    except KeyboardInterrupt:
+        print("Quitting worker...")
+    finally:
+        device.close()
+
+def animate(_):
+    data = QUEUE.get()
     X_DATA.append(data.timestamp)
     Y_DATA.append(data.channel_a)
+    plt.cla()
+    plt.plot(X_DATA[-100:], Y_DATA[-100:])
 
-def consume(queue):
-    if len(queue) >= CHUNK_SIZE:
-        chunk = queue[:CHUNK_SIZE]
-        handle_chunk(chunk)
-        return queue[CHUNK_SIZE:]
-    return queue
+
+def save_data(filename):
+    print(f"Saving data to {filename}")
+    with open(filename, 'w') as f:
+        for x, y in zip(X_DATA, Y_DATA):
+            f.write(f"{x}\t{y}\n")
 
 
 def main(argv: list = None):
@@ -54,34 +84,23 @@ def main(argv: list = None):
     try:
         [filename] = argv
     except:
-        filename = 'testing.csv'
-    
-    # non-blocking
-    device = pyftdi.serialext.serial_for_url(PORT, baudrate=BAUD, timeout=0)
-    device.open()
-    # clear the input buffer...
-    print("Clearing buffer...")
-    while device.read():
-        pass
-
-    queue = b''
-
+        filename = 'testing.dat'
+    # data should be put into the queue
+    run = threading.Event()
+    run.set()
+    thread = threading.Thread(target=worker, args=(run.is_set,))
+    thread.start()
+    # to quit the animation, press 'q'.
+    animation = FuncAnimation(plt.gcf(), animate, interval=1)
+    plt.show()
     try:
-        print("Listening...")
         while True:
-            queue += device.read(BUFFER_SIZE)
-            queue = consume(queue)
+            time.sleep(0.5)
     except KeyboardInterrupt:
         print("Quitting...")
-    finally:
-        device.close()
-    plt.scatter(X_DATA, Y_DATA)
-    plt.show()
-    with open(filename, 'w') as f:
-        for x, y in zip(X_DATA, Y_DATA):
-            f.write(f"{x}\t{y}\n")
-    
-
+        run.clear()
+        thread.join()
+        save_data(filename)
 
 if __name__ == '__main__':
     main()
