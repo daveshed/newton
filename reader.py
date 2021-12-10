@@ -27,6 +27,12 @@ MyData = collections.namedtuple(
 QUEUE = queue.Queue()
 X_DATA = []
 Y_DATA = []
+# calibration
+# 0kg    68300
+# 10kg  510100
+# 20kg  950110
+# 35kg  163400
+
 
 def checksum(chunk):
     result = 0
@@ -35,11 +41,19 @@ def checksum(chunk):
         result %= 256
     return result
 
+
 def handle_chunk(chunk):
     data = MyData(*struct.unpack(FORMAT, chunk))
     if checksum(chunk) != data.checksum:
         raise AssertionError("Data corruption")
     QUEUE.put(data)
+
+def calibrate(data):
+    m = 44714
+    c = 64027
+    mass = (data.channel_a - c) / m
+    seconds = data.timestamp / 1000
+    return seconds, mass
 
 
 def worker(condition):
