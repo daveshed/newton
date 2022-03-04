@@ -9,12 +9,8 @@ namespace ForceSensor {
 
     typedef struct __attribute__((packed)) Measurement_s {
         uint32_t timestamp;
-        float force_x;
-        float force_y;
-        float force_z;
-        int32_t data_x;
-        int32_t data_y;
-        int32_t data_z;
+        float newtons;
+        int32_t raw_data;
         uint8_t checksum;
     } Measurement_t;
 
@@ -29,19 +25,15 @@ namespace ForceSensor {
     class Plate
     {
     public:
-        explicit Plate(Sensor& x, Sensor& y, Sensor& z);
+        explicit Plate(Sensor& sensor);
         Measurement_t read(void);
         void update(void);
         void transmit(void);
-        static const uint8_t max_readings = 0xFF;
 
     private:
         uint8_t checksum_(const uint8_t* data, uint16_t length);
-        Sensor& sensor_x_;
-        Sensor& sensor_y_;
-        Sensor& sensor_z_;
-        uint8_t n_readings_ = 0U;
-        int32_t raw_data_[max_readings] = {0L};
+        Sensor& sensor_;
+        int32_t reading_ = 0L;
     };
 }
 #endif

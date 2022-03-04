@@ -4,12 +4,8 @@
 // Any digital outputs can be used here. Chip is read by bit-banging these
 // pins. It does not use any interrupts or standard comms protocols eg spi or
 // i2c. So far tested 2&3, 4&5 and 6&7.
-const int SENSOR_X_DOUT_PIN = 2;
-const int SENSOR_X_SCK_PIN = 3;
-const int SENSOR_Y_DOUT_PIN = 4;
-const int SENSOR_Y_SCK_PIN = 5;
-const int SENSOR_Z_DOUT_PIN = 6;
-const int SENSOR_Z_SCK_PIN = 7;
+const int SENSOR_DOUT_PIN = 2;
+const int SENSOR_SCK_PIN = 3;
 // const int BAUD_RATE = 9600;
 const int BAUD_RATE = 19200;
 
@@ -32,21 +28,15 @@ private:
     int32_t raw_data_ = 0L;
 };
 
-HX711 device_x, device_y, device_z;
-HX711ForceSensor sensor_x(device_x);
-HX711ForceSensor sensor_y(device_y);
-HX711ForceSensor sensor_z(device_z);
-ForceSensor::Plate force_plate(sensor_x, sensor_y, sensor_z);
+HX711 device;
+HX711ForceSensor sensor(device);
+ForceSensor::Plate force_plate(sensor);
 
 void setup(void)
 {
     Serial.begin(BAUD_RATE);
-    device_x.begin(SENSOR_X_DOUT_PIN, SENSOR_X_SCK_PIN);
-    device_x.set_gain(CH_A_HIGH_GAIN);
-    device_y.begin(SENSOR_Y_DOUT_PIN, SENSOR_Y_SCK_PIN);
-    device_y.set_gain(CH_A_HIGH_GAIN);
-    device_z.begin(SENSOR_Z_DOUT_PIN, SENSOR_Z_SCK_PIN);
-    device_z.set_gain(CH_A_HIGH_GAIN);
+    device.begin(SENSOR_DOUT_PIN, SENSOR_SCK_PIN);
+    device.set_gain(CH_A_HIGH_GAIN);
 }
 
 void loop(void)
