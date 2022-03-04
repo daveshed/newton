@@ -19,9 +19,15 @@ enum Gain {
 class HX711ForceSensor : public ForceSensor::Sensor {
 public:
     HX711ForceSensor(HX711& device) : device_(device) {};
-    float newtons(void) {return 0.0;};
-    void update(void) {raw_data_ = device_.read();};
-    int32_t raw_data(void) {return raw_data_;};
+    float newtons(void) {
+        return 0.0;
+    };
+    void update(void) override {
+        raw_data_ = device_.read();
+    };
+    int32_t raw_data(void) override {
+        return raw_data_;
+    };
 
 private:
     HX711& device_;

@@ -3,6 +3,16 @@
 
 using namespace ForceSensor;
 
+void Sensor::calibrate(Calibration_t& calibration)
+{
+    calibration_ = calibration;
+}
+
+float Sensor::newtons(void)
+{
+    return (raw_data_ * calibration_.slope) + calibration_.intercept;
+}
+
 Plate::Plate(Sensor& sensor) : sensor_(sensor)
 {}
 

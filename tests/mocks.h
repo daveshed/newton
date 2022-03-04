@@ -38,10 +38,6 @@ private:
 
 class FakeSensor : public ForceSensor::Sensor {
 public:
-    float newtons(void) {
-        assert(updated);
-        return newtons_;
-    };
     int32_t raw_data(void) {
         assert(updated);
         return raw_data_;
@@ -52,17 +48,12 @@ public:
         updated = true;
     };
     // mock methods available to tests...
-    void newtons(float value) {
-        new_newtons_ = value;
-        updated = false;
-    };
     void raw_data(int32_t value) {
         new_data_ = value;
         updated = false;
     };
 
 private:
-    int32_t raw_data_ = 0L;
     int32_t new_data_ = 0L;
     float newtons_ = 0.0;
     float new_newtons_ = 0.0;
