@@ -11,22 +11,29 @@ import pyftdi.serialext
 
 PORT = 'ftdi://ftdi:232h:1/1'
 BAUD = 19200
-FORMAT = '<LllB'
+FORMAT = '<LffflllB'
 CHUNK_SIZE = struct.calcsize(FORMAT)
 BUFFER_SIZE = 64
 
 MyData = collections.namedtuple(
     typename='MyData',
     field_names=[
-        'timestamp',
-        'channel_a',
-        'channel_b',
-        'checksum',
+        "timestamp",
+        "force_x",
+        "force_y",
+        "force_z",
+        "data_x",
+        "data_y",
+        "data_z",
+        "checksum",
     ],
 )
 QUEUE = queue.Queue()
+T_DATA = []
 X_DATA = []
 Y_DATA = []
+Z_DATA = []
+OFFSETS = None
 # calibration
 # 0kg    68300
 # 10kg  510100
@@ -78,23 +85,31 @@ def worker(condition):
         device.close()
 
 def animate(_):
+    global OFFSETS
     while True:
         try:
             data = QUEUE.get(block=False)
-            seconds, mass = calibrate(data)
-            X_DATA.append(seconds)
-            Y_DATA.append(mass)
+            # seconds, mass = calibrate(data)
+            # T_DATA.append(seconds)
+            # Y_DATA.append(mass)
+            T_DATA.append(data.timestamp)
+            if OFFSETS is None:
+                OFFSETS = data.data_x, data.data_y, data.data_z
+            X_DATA.append(data.data_x - OFFSETS[0])
+            Y_DATA.append(data.data_y - OFFSETS[1])
+            Z_DATA.append(data.data_z - OFFSETS[2])
         except queue.Empty:
             break
     plt.cla()
-    plt.plot(X_DATA[-100:], Y_DATA[-100:])
-
+    plt.plot(T_DATA[-100:], X_DATA[-100:])
+    plt.plot(T_DATA[-100:], Y_DATA[-100:])
+    plt.plot(T_DATA[-100:], Z_DATA[-100:])
 
 def save_data(filename):
     print(f"Saving data to {filename}")
     with open(filename, 'w') as f:
-        for x, y in zip(X_DATA, Y_DATA):
-            f.write(f"{x}\t{y}\n")
+        for t, x, y, z in zip(T_DATA, X_DATA, Y_DATA, Z_DATA):
+            f.write(f"{t}\t{x}\t{y}\t{z}\n")
 
 
 def main(argv: list = None):
