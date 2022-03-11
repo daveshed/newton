@@ -4,8 +4,9 @@
 #include "Arduino.h"
 #include "mocks.h"
 
-// exported public data
+// export internal serial handle for tests to access data
 SerialHandle serial_handle;
+// export Serial object that mocks Arduino.h Serial
 SerialInterface Serial = SerialInterface(serial_handle);
 // private data
 static uint32_t g_millis_value = 0L;
@@ -25,11 +26,31 @@ SerialInterface::SerialInterface(SerialHandle& h): handle_(h)
 
 void SerialInterface::flush(void)
 {
-    handle_.flush();
+    handle_.flushed = true;
 }
 
 size_t SerialInterface::write(uint8_t* data, size_t n)
 {
-    handle_.write(data, n);
+    assert(handle_.flushed);  // ensure we block for buffer to flush
+    assert((handle_.tx.size() + n) < handle_.buffer_size);
+    for (int i = 0; i < n; ++i)
+    {
+        handle_.tx.push_back(*data);
+    }
+    handle_.flushed = false;
     return n;
+}
+
+// TODO - should return -1 if no data is available
+int SerialInterface::read(void)
+{
+    auto& buffer = handle_.rx;
+    uint8_t result = buffer.front();
+    buffer.erase(buffer.begin());
+    return result;
+}
+
+int SerialInterface::available(void)
+{
+    return handle_.rx.size();
 }

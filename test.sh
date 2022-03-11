@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euo pipefail
-SOURCES="test/test_force_plate.cpp test/mocks.cpp forcesensor.cpp"
+SOURCES="test/test_comms.cpp test/mocks.cpp serialcomms.cpp forcesensor.cpp"
 mkdir -p build
 g++ \
     -g $SOURCES \

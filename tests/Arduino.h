@@ -16,7 +16,10 @@ class SerialInterface {
 public:
     explicit SerialInterface(SerialHandle& h);
     void flush(void);
+    int read(void);
     size_t write(uint8_t* data, size_t n);
+    int available(void);
+
 private:
     SerialHandle& handle_;
 };

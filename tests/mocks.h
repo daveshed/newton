@@ -3,6 +3,9 @@
 #define MOCKS_H
 #include <cassert>
 #include <cstring>
+#include <iostream>
+#include <vector>
+
 #include "Arduino.h"
 
 #include "forcesensor.h"
@@ -13,36 +16,35 @@ extern SerialHandle serial_handle;
 // allow tests to modify timestamp
 void millis(uint32_t value);
 
-// allow tests to inspect/reset the serial buffer
-class SerialHandle {
-public:
-    SerialHandle() {reset();};
-    void flush(void) {flushed_ = true;};
-    size_t write(uint8_t* data, size_t n) {
-        assert(flushed_);  // ensure we block for buffer to flush prior to write
-        memcpy(buffer_, data, n);
-        flushed_ = false;
-        return n;
-    };
+// Holds data in the underlying serial buffers exposed by Arduino.h Serial
+struct SerialHandle {
+    static const int buffer_size = 64;   // from arduino.cc
+    bool flushed = false;
     // mock methods for tests only...
-    uint8_t* buffer(void) {return buffer_;};
+    std::vector<uint8_t> rx;  // host->target(arduino)
+    std::vector<uint8_t> tx;  // target->host
     void reset(void) {
-        memset(buffer_, 0U, buffer_size_);
-        flushed_ = false;
+        rx.clear();
+        tx.clear();
+        flushed = false;
     };
-private:
-    static const int buffer_size_ = 255;
-    uint8_t buffer_[buffer_size_];
-    bool flushed_;
+    void print() {
+        std::cout << "rx:";
+        for (auto i = rx.begin(); i != rx.end(); ++i)
+        {
+            std::cout << " " << *i;
+        }
+        std::cout << std::endl;
+    };
 };
 
 class FakeSensor : public ForceSensor::Sensor {
 public:
-    int32_t raw_data(void) {
+    int32_t raw_data(void) const override {
         assert(updated);
         return raw_data_;
     };
-    void update(void) {
+    void update(void) override {
         raw_data_ = new_data_;
         newtons_ = new_newtons_;
         updated = true;

@@ -6,6 +6,7 @@
 namespace ForceSensor {
     class Sensor;
     class Plate;
+    class Command;
 
     typedef struct __attribute__((packed)) Measurement_s {
         uint32_t timestamp;
@@ -22,15 +23,16 @@ namespace ForceSensor {
     class Sensor
     {
     public:
-        Sensor(Calibration_t c = {0, 0}) : calibration_(c) {};
-        virtual int32_t raw_data(void) = 0;
+        Sensor(void);
+        virtual int32_t raw_data(void) const = 0;
         virtual void update(void) = 0;
-        float newtons(void);
+        float newtons(void) const;
         void calibrate(Calibration_t& calibration);
+        Calibration_t calibration(void) const;
 
     protected:
         int32_t raw_data_ = 0L;
-        Calibration_t& calibration_;
+        Calibration_t calibration_;
     };
 
     class Plate
