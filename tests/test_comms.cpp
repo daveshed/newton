@@ -10,6 +10,20 @@ void test_calibrates_sensor_from_command(void)
 {
     const ForceSensor::Calibration_t expected = {2.0, 3.0};
     serial_handle.reset();
+#if 0
+    // idea...
+    FakeSerialConnection serial;  // flip rx/tx for host and target
+    HostInterface host(serial.host);
+    TargetInterface target(serial.target);
+    // host sends the command...
+    ForceSensor::CalibrateCommand command(expected);
+    host.send(command);
+    // target end should receive it...
+    GenericCommand* result;
+    target.receive(result);
+    // The result should visit the sensor and do what it needs to do...
+    sensor.handle(result);
+#endif
     const uint8_t command[] = {0};
     // push calibrate command + payload into the receive buffer...
     // serial_handle.rx.push_back(0x0);
