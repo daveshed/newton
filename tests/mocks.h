@@ -1,7 +1,8 @@
 #ifndef MOCKS_H
 #define MOCKS_H
 #include "Arduino.h"
-#include "../forcesensor.h"
+
+#include "forcesensor.h"
 
 extern uint32_t millis_value_;
 

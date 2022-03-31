@@ -1,10 +1,14 @@
-#include <cassert>
 // code under test...
-#include "../forcesensor.h"
+#include "forcesensor.h"
 // test dependencies...
+#include "CppUTest/CommandLineTestRunner.h"
+#include "CppUTest/TestHarness.h"
 #include "mocks.h"
 
-void test_checksum_non_overflowing(void)
+TEST_GROUP(BasicTests)
+{};
+
+TEST(BasicTests, TestCheckSumNonOverflowing)
 {
     FakeLoadCell cell;
     set_fake_millis(1UL);
@@ -12,10 +16,10 @@ void test_checksum_non_overflowing(void)
     cell.set_channel_b(1L);
     ForceSensor sensor(cell);
     ForceMeasurement_t reading = sensor.read();
-    assert(3U == reading.checksum);
+    CHECK(3U == reading.checksum);
 }
 
-void test_checksum_overflowing(void)
+TEST(BasicTests, TestChecksumOverflowing)
 {
     FakeLoadCell cell;
     set_fake_millis(1UL);
@@ -23,7 +27,7 @@ void test_checksum_overflowing(void)
     cell.set_channel_b(1L);
     ForceSensor sensor(cell);
     ForceMeasurement_t reading = sensor.read();
-    assert(1U == reading.checksum);
+    CHECK(1U == reading.checksum);
 }
 
 // void test_correct_data_written_to_serial(void)
@@ -37,9 +41,7 @@ void test_checksum_overflowing(void)
 //     Serial.write(uint_reading)
 // }
 
-int main(int argc, char const *argv[])
+int main(int argc, const char* argv[])
 {
-    test_checksum_non_overflowing();
-    test_checksum_overflowing();
-    return 0;
+    return RUN_ALL_TESTS(argc, argv);
 }
