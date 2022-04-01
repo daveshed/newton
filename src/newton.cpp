@@ -6,8 +6,7 @@
 // i2c. So far tested 2&3, 4&5 and 6&7.
 const int SENSOR_DOUT_PIN = 2;
 const int SENSOR_SCK_PIN = 3;
-// const int BAUD_RATE = 9600;
-const int BAUD_RATE = 19200;
+const int BAUD_RATE = 9600;
 
 // note that changing gain/input takes time.
 enum Gain {
