@@ -26,6 +26,9 @@ struct SerialHandle {
     void reset(void) {
         rx.clear();
         tx.clear();
+        // clean up allocated memory...
+        rx.shrink_to_fit();
+        tx.shrink_to_fit();
         flushed = false;
     };
     void print() {

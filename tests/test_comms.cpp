@@ -1,15 +1,26 @@
-#include <cassert>
-#include <cmath>
-
+// test dependencies
+#include "CppUTest/TestHarness.h"
 #include "mocks.h"
-#include "../serialcomms.h"
+// code under test
+#include "serialcomms.h"
 
 #define TOLERANCE  0.001
 
-void test_calibrates_sensor_from_command(void)
+TEST_GROUP(SerialCommsTestGroup)
+{
+    void setup()
+    {}
+
+    void teardown()
+    {
+        serial_handle.reset();
+    }
+
+};
+
+TEST(SerialCommsTestGroup, TestCalibratesSensorFromCommand)
 {
     const ForceSensor::Calibration_t expected = {2.0, 3.0};
-    serial_handle.reset();
 #if 0
     // idea...
     FakeSerialConnection serial;  // flip rx/tx for host and target
@@ -24,7 +35,6 @@ void test_calibrates_sensor_from_command(void)
     // The result should visit the sensor and do what it needs to do...
     sensor.handle(result);
 #endif
-    const uint8_t command[] = {0};
     // push calibrate command + payload into the receive buffer...
     // serial_handle.rx.push_back(0x0);
     serial_handle.rx.insert(
@@ -36,21 +46,13 @@ void test_calibrates_sensor_from_command(void)
     CommandInterface interface(sensor);
     // command should be processed...
     interface.update();
-    assert(
-        fabs(expected.slope - sensor.calibration().slope) < TOLERANCE);
-    assert(
-        fabs(expected.intercept - sensor.calibration().intercept) < TOLERANCE);
-    assert(serial_handle.rx.empty());
-}
-
-void test_bar(void)
-{
-
-}
-
-int main(void)
-{
-    test_calibrates_sensor_from_command();
-    test_bar();
-    return 0;
+    DOUBLES_EQUAL(
+        expected.slope,
+        sensor.calibration().slope,
+        TOLERANCE);
+    DOUBLES_EQUAL(
+        expected.intercept,
+        sensor.calibration().intercept,
+        TOLERANCE);
+    CHECK(serial_handle.rx.empty());
 }

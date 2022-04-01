@@ -33,9 +33,9 @@ size_t SerialInterface::write(uint8_t* data, size_t n)
 {
     assert(handle_.flushed);  // ensure we block for buffer to flush
     assert((handle_.tx.size() + n) < handle_.buffer_size);
-    for (int i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i)
     {
-        handle_.tx.push_back(*data);
+        handle_.tx.push_back(data[i]);
     }
     handle_.flushed = false;
     return n;
@@ -44,6 +44,7 @@ size_t SerialInterface::write(uint8_t* data, size_t n)
 // TODO - should return -1 if no data is available
 int SerialInterface::read(void)
 {
+    // A deque would make more sense here
     auto& buffer = handle_.rx;
     uint8_t result = buffer.front();
     buffer.erase(buffer.begin());

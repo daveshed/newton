@@ -31,4 +31,4 @@ clean
 run-tests
 clean
 build-fw
-flash-fw
+# flash-fw

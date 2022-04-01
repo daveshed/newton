@@ -1,7 +1,8 @@
-#include <iostream>
-
+// third party
 #include "Arduino.h"
+// project imports
 #include "forcesensor.h"
+#include "logging.h"
 #include "serialcomms.h"
 
 // Private helper reads from serial into a buffer. A template function might
@@ -10,13 +11,14 @@
 // For now let's do this...
 void read_serial(uint8_t* data, size_t n)
 {
-    std::cout << "read_serial:";
-    for (int i = 0; i < n; i++)
+    LOG_DEBUG("read_serial:");
+    for (size_t i = 0; i < n; i++)
     {
         data[i] = Serial.read();
-        std::cout << " " << data[i];
+        LOG_DEBUG(" ");
+        LOG_DEBUG(data[i]);
     }
-    std::cout << std::endl;
+    LOG_DEBUG("\n");
 }
 
 ForceSensor::Calibration_t read_calibration()

@@ -25,7 +25,7 @@ public:
     void update(void) override {
         raw_data_ = device_.read();
     };
-    int32_t raw_data(void) override {
+    int32_t raw_data(void) const override {
         return raw_data_;
     };
 
