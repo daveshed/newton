@@ -1,7 +1,7 @@
 // third party
 #include "Arduino.h"
 // project imports
-#include "forcesensor.h"
+#include "node.h"
 #include "logging.h"
 #include "serialcomms.h"
 
@@ -21,14 +21,14 @@ void read_serial(uint8_t* data, size_t n)
     LOG_DEBUG("\n");
 }
 
-ForceSensor::Calibration_t read_calibration()
+Newton::Calibration_t read_calibration()
 {
-    ForceSensor::Calibration_t result;
-    read_serial((uint8_t*)&result, sizeof(ForceSensor::Calibration_t));
+    Newton::Calibration_t result;
+    read_serial((uint8_t*)&result, sizeof(Newton::Calibration_t));
     return result;
 }
 
-CommandInterface::CommandInterface(ForceSensor::Sensor& sensor) :
+CommandInterface::CommandInterface(Newton::Sensor& sensor) :
 sensor_(sensor)
 {}
 
@@ -36,7 +36,7 @@ void CommandInterface::update(void)
 {
     if(Serial.available())
     {
-        ForceSensor::Calibration_t calib = read_calibration();
+        Newton::Calibration_t calib = read_calibration();
         sensor_.calibrate(calib);
     }
 }

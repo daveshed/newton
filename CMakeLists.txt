@@ -1,17 +1,20 @@
 cmake_minimum_required(VERSION 2.8)
 project(Newton C CXX)
+option(INTEGRATION_TEST "Stub hardware/perpheral interfaces" OFF)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
+    # Build for Arduino..
     print_board_list()
     print_programmer_list()
     include_directories(
+        include
         third-party
-        src
     )
     add_subdirectory(third-party)
 else()
+    # Build for unit tests...
     include_directories(
-        src
+        include
         tests
     )
     add_subdirectory(tests)

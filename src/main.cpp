@@ -1,4 +1,4 @@
-#include "forcesensor.h"
+#include "node.h"
 #include "HX711.h"
 
 // Any digital outputs can be used here. Chip is read by bit-banging these
@@ -15,10 +15,10 @@ enum Gain {
     CH_A_MID_GAIN = 64,
 };
 
-class HX711ForceSensor : public ForceSensor::Sensor {
+class HX711ForceSensor : public Newton::Sensor {
 public:
     HX711ForceSensor(HX711& device) : device_(device) {};
-    float newtons(void) {
+    float force(void) {
         return 0.0;
     };
     void update(void) override {
@@ -35,7 +35,7 @@ private:
 
 HX711 device;
 HX711ForceSensor sensor(device);
-ForceSensor::Plate force_plate(sensor);
+Newton::Node node(sensor);
 
 void setup(void)
 {
@@ -46,6 +46,6 @@ void setup(void)
 
 void loop(void)
 {
-    force_plate.update();
-    force_plate.transmit();
+    node.update();
+    node.transmit();
 }

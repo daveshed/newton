@@ -8,7 +8,7 @@ else()
         mocks.cpp
         runner.cpp
         test_comms.cpp
-        test_force_plate.cpp
+        test_node.cpp
     )
     target_link_libraries(test_runner
         newton

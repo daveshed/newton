@@ -20,7 +20,7 @@ TEST_GROUP(SerialCommsTestGroup)
 
 TEST(SerialCommsTestGroup, TestCalibratesSensorFromCommand)
 {
-    const ForceSensor::Calibration_t expected = {2.0, 3.0};
+    const Newton::Calibration_t expected = {2.0, 3.0};
 #if 0
     // idea...
     FakeSerialConnection serial;  // flip rx/tx for host and target
@@ -40,7 +40,7 @@ TEST(SerialCommsTestGroup, TestCalibratesSensorFromCommand)
     serial_handle.rx.insert(
         serial_handle.rx.end(),
         (const uint8_t*)&expected,
-        (const uint8_t*)&expected + sizeof(ForceSensor::Calibration_t));
+        (const uint8_t*)&expected + sizeof(Newton::Calibration_t));
     serial_handle.print();
     FakeSensor sensor;
     CommandInterface interface(sensor);

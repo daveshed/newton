@@ -8,7 +8,7 @@
 
 #include "Arduino.h"
 
-#include "forcesensor.h"
+#include "node.h"
 
 // make the underlying serial handle available for tests to read buffer.
 extern SerialHandle serial_handle;
@@ -41,7 +41,7 @@ struct SerialHandle {
     };
 };
 
-class FakeSensor : public ForceSensor::Sensor {
+class FakeSensor : public Newton::Sensor {
 public:
     int32_t raw_data(void) const override {
         assert(updated);
@@ -49,7 +49,7 @@ public:
     };
     void update(void) override {
         raw_data_ = new_data_;
-        newtons_ = new_newtons_;
+        force_ = new_force_;
         updated = true;
     };
     // mock methods available to tests...
@@ -60,8 +60,8 @@ public:
 
 private:
     int32_t new_data_ = 0L;
-    float newtons_ = 0.0;
-    float new_newtons_ = 0.0;
+    float force_ = 0.0;
+    float new_force_ = 0.0;
     bool updated = false;
 };
 #endif

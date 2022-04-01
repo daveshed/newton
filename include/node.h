@@ -1,16 +1,16 @@
-#ifndef FORCESENSOR_H
-#define FORCESENSOR_H
+#ifndef NODE_H
+#define NODE_H
 
 #include "Arduino.h"  // cstdint
 
-namespace ForceSensor {
+namespace Newton {
     class Sensor;
     class Plate;
     class Command;
 
     typedef struct __attribute__((packed)) Measurement_s {
         uint32_t timestamp;
-        float newtons;
+        float force;
         int32_t raw_data;
         uint8_t checksum;
     } Measurement_t;
@@ -26,7 +26,7 @@ namespace ForceSensor {
         Sensor(void);
         virtual int32_t raw_data(void) const = 0;
         virtual void update(void) = 0;
-        float newtons(void) const;
+        float force(void) const;
         void calibrate(Calibration_t& calibration);
         Calibration_t calibration(void) const;
 
@@ -35,10 +35,10 @@ namespace ForceSensor {
         Calibration_t calibration_;
     };
 
-    class Plate
+    class Node
     {
     public:
-        explicit Plate(Sensor& sensor);
+        explicit Node(Sensor& sensor);
         Measurement_t read(void);
         void update(void);
         void transmit(void);
