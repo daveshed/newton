@@ -3,6 +3,7 @@ set -ueo pipefail
 
 PROJECT_ROOT=$(dirname $(realpath $0))
 BUILD_ABSPATH=${PROJECT_ROOT}/build
+TOOLCHAIN_ABSPATH=${PROJECT_ROOT}/arduino-cmake/cmake/ArduinoToolchain.cmake
 
 function clean {
     rm -rf ${BUILD_ABSPATH} && \
@@ -19,7 +20,7 @@ function run-tests {
 
 function build-fw {
     cd ${BUILD_ABSPATH} && \
-        cmake --toolchain arduino-cmake/cmake/ArduinoToolchain.cmake ../ && \
+        cmake --toolchain ${TOOLCHAIN_ABSPATH} ../  && \
         make
 }
 

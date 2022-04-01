@@ -1,12 +1,9 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include "Arduino.h"  // cstdint
+#include "ArduinoUtils.h"
 
 namespace Newton {
-    class Sensor;
-    class Plate;
-    class Command;
 
     typedef struct __attribute__((packed)) Measurement_s {
         uint32_t timestamp;
@@ -24,6 +21,7 @@ namespace Newton {
     {
     public:
         Sensor(void);
+        virtual void begin(void) = 0;
         virtual int32_t raw_data(void) const = 0;
         virtual void update(void) = 0;
         float force(void) const;
@@ -39,6 +37,7 @@ namespace Newton {
     {
     public:
         explicit Node(Sensor& sensor);
+        void begin(void);
         Measurement_t read(void);
         void update(void);
         void transmit(void);

@@ -1,14 +1,10 @@
 // mock api only available to tests
 #ifndef MOCKS_H
 #define MOCKS_H
-#include <cassert>
-#include <cstring>
-#include <iostream>
 #include <vector>
 
-#include "Arduino.h"
-
-#include "node.h"
+#include "ArduinoLinux.h"
+#include "logging.h"
 
 // make the underlying serial handle available for tests to read buffer.
 extern SerialHandle serial_handle;
@@ -32,36 +28,14 @@ struct SerialHandle {
         flushed = false;
     };
     void print() {
-        std::cout << "rx:";
+        LOG_DEBUG("rx:");
         for (auto i = rx.begin(); i != rx.end(); ++i)
         {
-            std::cout << " " << *i;
+            LOG_DEBUG(" ");
+            LOG_DEBUG(*i);
         }
         std::cout << std::endl;
     };
 };
 
-class FakeSensor : public Newton::Sensor {
-public:
-    int32_t raw_data(void) const override {
-        assert(updated);
-        return raw_data_;
-    };
-    void update(void) override {
-        raw_data_ = new_data_;
-        force_ = new_force_;
-        updated = true;
-    };
-    // mock methods available to tests...
-    void raw_data(int32_t value) {
-        new_data_ = value;
-        updated = false;
-    };
-
-private:
-    int32_t new_data_ = 0L;
-    float force_ = 0.0;
-    float new_force_ = 0.0;
-    bool updated = false;
-};
-#endif
+#endif // MOCKS_H

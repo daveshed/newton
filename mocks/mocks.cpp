@@ -1,7 +1,5 @@
-#include <cstddef>
-#include <cstring>
-
-#include "Arduino.h"
+#ifndef __AVR__
+#include "ArduinoUtils.h"
 #include "mocks.h"
 
 // export internal serial handle for tests to access data
@@ -55,3 +53,4 @@ int SerialInterface::available(void)
 {
     return handle_.rx.size();
 }
+#endif

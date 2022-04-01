@@ -1,13 +1,22 @@
 if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
-    # Build for arduino...
-    generate_arduino_firmware(newton
-        SRCS main.cpp node.cpp serialcomms.cpp
+    # Arduino build for release...
+    generate_arduino_library(sensor
+        SRCS sensor.cpp
         LIBS HX711
+        BOARD uno
+    )
+    generate_arduino_library(newton
+        SRCS node.cpp serialcomms.cpp
+        BOARD uno
+    )
+    generate_arduino_firmware(newton_release
+        SRCS main.cpp
+        LIBS newton sensor
         BOARD uno
         PORT /dev/ttyACM0
     )
 else()
-    # Build for library for unit testing...
+    # Build library for unit testing...
     add_library(newton
         node.cpp
         serialcomms.cpp

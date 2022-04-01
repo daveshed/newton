@@ -1,6 +1,4 @@
-// third party
-#include "Arduino.h"
-// project imports
+#include "ArduinoUtils.h"
 #include "node.h"
 #include "logging.h"
 #include "serialcomms.h"

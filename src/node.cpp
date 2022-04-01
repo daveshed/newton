@@ -1,4 +1,4 @@
-#include "Arduino.h"
+#include "ArduinoUtils.h"
 #include "node.h"
 
 using namespace Newton;
@@ -24,6 +24,11 @@ Calibration_t Sensor::calibration(void) const
 
 Node::Node(Sensor& sensor) : sensor_(sensor)
 {}
+
+void Node::begin(void)
+{
+    sensor_.begin();
+}
 
 Measurement_t Node::read(void)
 {

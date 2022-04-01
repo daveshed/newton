@@ -1,23 +1,22 @@
-#include "mocks.h"
-#include "../forcesensor.h"
-FakeSensor sensor_x, sensor_y, sensor_z;
-ForceSensor::Plate force_plate(sensor_x, sensor_y, sensor_z);
+#include "node.h"
+#include "sensor_stub.h"
 
-int main(int argc, char const *argv[])
+const int BAUD_RATE = 9600;
+
+FakeForceSensor sensor;
+Newton::Node node(sensor);
+
+void setup(void)
 {
-    // open serial handle from argv
-    // TODO
-    // write some canned data to the forceplate
-    millis(1UL);
-    sensor_x.raw_data(1L);
-    sensor_y.raw_data(1L);
-    sensor_z.raw_data(1L);
-    // keep transmitting data
-    while true
-    {
-        force_plate.update();
-        force_plate.transmit(serial);
-        sleep(1sec);
-    }
-    return 0;
+    Serial.begin(BAUD_RATE);
+    node.begin();
+}
+
+void loop(void)
+{
+    // Inject some junk data to demonstrate everything is working. We should
+    // see a monotonic increase in the signal with the clock...
+    sensor.raw_data(millis());
+    node.update();
+    node.transmit();
 }

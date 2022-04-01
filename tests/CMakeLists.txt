@@ -1,16 +1,22 @@
 if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
-    message(STATUS "Skipping test build for this system.")
+    # Integration test build...
+    generate_arduino_firmware(test_integration
+        SRCS test_integration.cpp
+        LIBS newton sensor_stub
+        BOARD uno
+        PORT /dev/ttyACM0
+    )
 else()
-    # Test Runner executable
+    # Test Runner executable...
     set(CMAKE_BUILD_TYPE debug)  # compile with debug symbols
     find_package(CppUTest REQUIRED)
     add_executable(test_runner
-        mocks.cpp
         runner.cpp
         test_comms.cpp
         test_node.cpp
     )
     target_link_libraries(test_runner
+        mocks
         newton
         CppUTest
         CppUTestExt

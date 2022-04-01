@@ -3,9 +3,9 @@
 // test dependencies
 #include "CppUTest/TestHarness.h"
 #include "mocks.h"
+#include "sensor_stub.h"
 // code under test
 #include "node.h"
-#include "Arduino.h"
 
 #define TOLERANCE 0.001
 
@@ -22,7 +22,7 @@ TEST_GROUP(ForcePlateTestGroup)
 
 TEST(ForcePlateTestGroup, TestCheckSumNonOverFlowing)
 {
-    FakeSensor sensor;
+    FakeForceSensor sensor;
     millis(1UL);
     sensor.raw_data(1L);
     Newton::Node node(sensor);
@@ -33,7 +33,7 @@ TEST(ForcePlateTestGroup, TestCheckSumNonOverFlowing)
 
 TEST(ForcePlateTestGroup, TestChecksumOverflowing)
 {
-    FakeSensor sensor;
+    FakeForceSensor sensor;
     millis(1UL);
     sensor.raw_data(255L);
     Newton::Node node(sensor);
@@ -44,7 +44,7 @@ TEST(ForcePlateTestGroup, TestChecksumOverflowing)
 
 TEST(ForcePlateTestGroup, TestCorrectDataWrittenToSerial)
 {
-    FakeSensor sensor;
+    FakeForceSensor sensor;
     millis(1UL);
     sensor.raw_data(1L);
     Newton::Node node(sensor);
@@ -61,7 +61,7 @@ TEST(ForcePlateTestGroup, TestCorrectDataWrittenToSerial)
 
 TEST(ForcePlateTestGroup, TestSensorCalibrates)
 {
-    FakeSensor sensor;
+    FakeForceSensor sensor;
     Newton::Calibration_t calib{3.0, 4.0};
     sensor.calibrate(calib);
     sensor.raw_data(1.0);

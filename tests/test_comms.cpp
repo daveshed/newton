@@ -1,6 +1,7 @@
 // test dependencies
 #include "CppUTest/TestHarness.h"
 #include "mocks.h"
+#include "sensor_stub.h"
 // code under test
 #include "serialcomms.h"
 
@@ -42,7 +43,7 @@ TEST(SerialCommsTestGroup, TestCalibratesSensorFromCommand)
         (const uint8_t*)&expected,
         (const uint8_t*)&expected + sizeof(Newton::Calibration_t));
     serial_handle.print();
-    FakeSensor sensor;
+    FakeForceSensor sensor;
     CommandInterface interface(sensor);
     // command should be processed...
     interface.update();

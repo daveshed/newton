@@ -1,5 +1,5 @@
-#ifndef ARDUINO_H
-#define ARDUINO_H
+#ifndef ARDUINOLINUX_H
+#define ARDUINOLINUX_H
 #include <cstdint>
 #include <cstddef>
 class SerialInterface;
@@ -24,4 +24,4 @@ private:
     SerialHandle& handle_;
 };
 
-#endif // ARDUINO_H
+#endif // ARDUINOLINUX_H
