@@ -6,6 +6,11 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
         BOARD uno
         PORT /dev/ttyACM0
     )
+    include_directories(
+        ../include
+        ../mocks
+        ../third-party/ArduinoSTL/src
+    )
 else()
     # Test Runner executable...
     set(CMAKE_BUILD_TYPE debug)  # compile with debug symbols
@@ -22,6 +27,7 @@ else()
         CppUTestExt
     )
     target_compile_options(test_runner PRIVATE -Werror -Wall -Wextra)
+    target_include_directories(test_runner PUBLIC ../mocks/)
 
     # CTest
     enable_testing()

@@ -2,6 +2,7 @@
 #define ARDUINOUTILS_H
 #ifdef __AVR__
     #include "Arduino.h"
+    #include "ArduinoSTL.h"
     #define ASSERT(x)
 #else
     #include "ArduinoLinux.h"
