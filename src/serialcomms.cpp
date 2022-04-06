@@ -3,13 +3,13 @@
 #include "logging.h"
 #include "serialcomms.h"
 
-#include <string>
-#include <map>
-
 using namespace Newton;
 
 typedef void(*command_handler)(TargetInterface* iface);
-
+enum commands {
+    CALIBRATE_COMMAND,
+    COMMAND_MAX,
+};
 
 void handle_calibrate(TargetInterface* iface)
 {
@@ -21,16 +21,16 @@ void handle_calibrate(TargetInterface* iface)
     iface->sensor().calibrate(calibration);
 }
 
-std::map<uint8_t, command_handler> handlers = {
-    {0x00, handle_calibrate},
-};
+
+// lookup table...
+command_handler handlers[COMMAND_MAX] = {handle_calibrate};
 
 HostInterface::HostInterface(Newton::Serial& s) : serial_(s) {}
 
 void HostInterface::calibrate(Calibration_t calibration) const
 {
     // command type
-    serial_.transmit(0x00);
+    serial_.transmit(CALIBRATE_COMMAND);
     // payload
     serial_.transmit((const uint8_t*)&calibration, sizeof(Calibration_t));
 }
