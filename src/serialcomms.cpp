@@ -5,34 +5,44 @@
 
 using namespace Newton;
 
-typedef void(*command_handler)(TargetInterface* iface);
 enum commands {
     CALIBRATE_COMMAND,
+    GET_READING_COMMAND,
     COMMAND_MAX,
 };
 
-void handle_calibrate(TargetInterface* iface)
-{
-    LOG_DEBUG("Calibrating...\n");
-    // read the calibration data from serial...
-    Calibration_t calibration;
-    iface->serial().receive((uint8_t*)&calibration, sizeof(Calibration_t));
-    // apply it to the sensor...
-    iface->sensor().calibrate(calibration);
-}
-
-
-// lookup table...
-command_handler handlers[COMMAND_MAX] = {handle_calibrate};
-
-HostInterface::HostInterface(Newton::Serial& s) : serial_(s) {}
+HostInterface::HostInterface(Newton::Serial& s) : serial_(s)
+{ }
 
 void HostInterface::calibrate(Calibration_t calibration) const
 {
+    LOG_DEBUG("##### Host issuing calibration...\n");
     // command type
     serial_.transmit(CALIBRATE_COMMAND);
     // payload
     serial_.transmit((const uint8_t*)&calibration, sizeof(Calibration_t));
+}
+
+Measurement_t HostInterface::get_reading(void)
+{
+    LOG_DEBUG("##### Host getting reading...\n");
+    // 1. issue the command...
+    serial_.transmit(GET_READING_COMMAND);
+    // 2. wait for the response - this needs consideration. What if the data
+    //    from the target takes a long time to come? Will we just let timeout
+    //    exceptions raise?
+    Measurement_t result = {};
+    serial_.receive((uint8_t*)&result, sizeof(Measurement_t));
+    return result;
+}
+
+TargetDataReceived::TargetDataReceived(TargetInterface* iface) : iface_(iface)
+{}
+
+void TargetDataReceived::operator()(void)
+{
+    LOG_DEBUG("handling serial data...\n");
+    iface_->handler_(iface_);
 }
 
 TargetInterface::TargetInterface(
@@ -41,7 +51,10 @@ TargetInterface::TargetInterface(
 )
 : serial_(serial)
 , sensor_(sensor)
-{ }
+, serial_listener_(TargetDataReceived(this))
+{
+    serial_.register_callback(&serial_listener_);
+}
 
 Sensor& TargetInterface::sensor(void) const
 {
@@ -55,57 +68,53 @@ Newton::Serial& TargetInterface::serial(void) const
 
 void TargetInterface::update(void)
 {
-    // read the command from serial...
-    uint8_t command_type = serial_.receive();
-    // execute it on this...
-    LOG_DEBUG(command_type);
-    handlers[command_type](this);
+    sensor_.update();
 }
 
-CalibrateCommand::CalibrateCommand(Calibration_t calib)
-: calibration_(calib)
-{}
-
-void CalibrateCommand::execute(TargetInterface& iface)
+void TargetInterface::handle_calibrate_(TargetInterface* iface)
 {
-    iface.sensor().calibrate(calibration_);
+    LOG_DEBUG("handling calibration request...\n");
+    // read the calibration data from serial when it's arrived...
+    if (iface->serial().available() < sizeof(Calibration_t))
+    {
+        return;
+    }
+    Calibration_t calibration;
+    iface->serial().receive((uint8_t*)&calibration, sizeof(Calibration_t));
+    // apply it to the sensor...
+    iface->sensor().calibrate(calibration);
+    // done
+    iface->handler_ = handle_request_;
 }
 
+void TargetInterface::handle_get_reading_(TargetInterface* iface)
+{
+    LOG_DEBUG("handling get reading request...\n");
+    Measurement_t result = {
+        millis(),
+        iface->sensor().force(),
+        iface->sensor().raw_data(),
+        0, // FIXME: calculate checksum
+    };
+    iface->serial().transmit((const uint8_t*)&result, sizeof(Measurement_t));
+    // done
+    iface->handler_ = handle_request_;
+}
 
-
-
-// Private helper reads from serial into a buffer. A template function might
-// be a good idea here. It could read from Serial and create the type required.
-// eg auto foo = read_serial<FooT>(); ?
-// For now let's do this...
-// void read_serial(uint8_t* data, size_t n)
-// {
-//     LOG_DEBUG("read_serial:");
-//     for (size_t i = 0; i < n; i++)
-//     {
-//         data[i] = Serial.read();
-//         LOG_DEBUG(" ");
-//         LOG_DEBUG(data[i]);
-//     }
-//     LOG_DEBUG("\n");
-// }
-
-// Calibration_t read_calibration()
-// {
-//     Newton::Calibration_t result;
-//     read_serial((uint8_t*)&result, sizeof(Newton::Calibration_t));
-//     return result;
-// }
-
-// CommandInterface::CommandInterface(Newton::Sensor& sensor) :
-// sensor_(sensor)
-// {}
-
-// void Newton::CommandInterface::update(void)
-// {
-//     if(Serial.available())
-//     {
-//         Newton::Calibration_t calib = read_calibration();
-//         sensor_.calibrate(calib);
-//     }
-// }
+void TargetInterface::handle_request_(TargetInterface* iface)
+{
+    // lookup table...
+    data_handler handlers[COMMAND_MAX] = {
+        handle_calibrate_,
+        handle_get_reading_,
+    };
+    // Not handling anything. Read the next command from serial...
+    uint8_t command_type = iface->serial().receive();
+    // execute it on this...
+    LOG_DEBUG("Got command <");
+    LOG_DEBUG(static_cast<int>(command_type));
+    LOG_DEBUG(">\n");
+    // Find the correct handler and call it to dispatch the data.
+    iface->handler_ = handlers[command_type];
+    iface->handler_(iface);
+}

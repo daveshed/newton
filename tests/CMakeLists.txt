@@ -13,7 +13,6 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
     )
 else()
     # Test Runner executable...
-    set(CMAKE_BUILD_TYPE debug)  # compile with debug symbols
     find_package(CppUTest REQUIRED)
     add_executable(test_runner
         runner.cpp

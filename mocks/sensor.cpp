@@ -10,7 +10,7 @@ void FakeForceSensor::begin(void) {};
 int32_t FakeForceSensor::raw_data(void) const
 {
     ASSERT(updated);
-        return raw_data_;
+    return raw_data_;
 }
 
 void FakeForceSensor::update(void)
