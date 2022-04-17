@@ -1,0 +1,1 @@
+A namespace pacakge `newton.hcomms` that allows a host PC access to the target over a serial interface with a python->c++ binding.

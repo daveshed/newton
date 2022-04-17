@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(Newton C CXX)
-set (CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 11)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
     # Build for Arduino..
@@ -10,6 +10,8 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
 else()
     # Build for unit tests...
     set(CMAKE_BUILD_TYPE debug)  # compile with debug symbols
+    # And build python extensions...
+    add_subdirectory(tools/hcomms)
 endif()
 add_subdirectory(mocks)
 add_subdirectory(src)

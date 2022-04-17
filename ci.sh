@@ -3,6 +3,7 @@ set -ueo pipefail
 
 PROJECT_ROOT=$(dirname $(realpath $0))
 BUILD_ABSPATH=${PROJECT_ROOT}/build
+CUSTOM_INCLUDE_PATHS=/usr/include/python3.10/
 TOOLCHAIN_ABSPATH=${PROJECT_ROOT}/arduino-cmake/cmake/ArduinoToolchain.cmake
 
 function clean {
@@ -10,12 +11,18 @@ function clean {
         mkdir -p ${BUILD_ABSPATH}
 }
 
-function run-tests {
+function build-linux {
+    # run tests...
+    set +u
     cd ${BUILD_ABSPATH} && \
         cmake ../ && \
-        make && \
+        CPLUS_INCLUDE_PATH="$CPLUS_INCLUDE_PATH:$CUSTOM_INCLUDE_PATHS" make && \
         cd ${BUILD_ABSPATH}/tests && \
         ctest
+    set -u
+    # install python extension...
+    cd ${BUILD_ABSPATH} && \
+        make install
 }
 
 function build-fw {
@@ -29,7 +36,7 @@ function flash-fw {
 }
 
 clean
-run-tests
+build-linux
 clean
 build-fw
 # flash-fw
