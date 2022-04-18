@@ -12,15 +12,14 @@ function clean {
 }
 
 function build-linux {
+    # build tests and linux serial driver...
+    set +u && \
+        cd ${BUILD_ABSPATH} && \
+        cmake -DCMAKE_CXX_FLAGS=-I$CUSTOM_INCLUDE_PATHS ../ && \
+        make
     # run tests...
-    set +u
-    cd ${BUILD_ABSPATH} && \
-        cmake ../ && \
-        CPLUS_INCLUDE_PATH="$CPLUS_INCLUDE_PATH:$CUSTOM_INCLUDE_PATHS" make && \
-        cd ${BUILD_ABSPATH}/tests && \
-        ctest
-    set -u
-    # install python extension...
+    cd ${BUILD_ABSPATH}/tests && ctest
+    # install python extension module...
     cd ${BUILD_ABSPATH} && \
         make install
 }

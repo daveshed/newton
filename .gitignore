@@ -1,4 +1,8 @@
+# build artifacts
 build/**
+**/*.so
+
+# data files
 **/*.dat
 
 # python

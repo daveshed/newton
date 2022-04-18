@@ -26,7 +26,7 @@ else()
         node.cpp
         serialcomms.cpp
     )
-    target_include_directories(newton PUBLIC ../include/)
+    target_include_directories(newton PRIVATE ../include/)
     # Only compile with warnings when testing. Otherwise we bring in errors
     # from third-party stuff.
     target_compile_options(newton PRIVATE -Werror -Wall -Wextra)

@@ -1,19 +1,27 @@
-//  Copyright Joel de Guzman 2002-2004. Distributed under the Boost
-//  Software License, Version 1.0. (See accompanying file LICENSE_1_0.txt
-//  or copy at http://www.boost.org/LICENSE_1_0.txt)
-//  Hello World Example from the tutorial
-//  [Joel de Guzman 10/9/2002]
-
 #include <boost/python/module.hpp>
 #include <boost/python/def.hpp>
+#include "CppLinuxSerial/SerialPort.hpp"
+
+#include "serialcomms.h"
+
+using namespace mn::CppLinuxSerial;
 
 char const* greet()
 {
+   SerialPort serialPort(
+      "/dev/ttyACM0",
+      BaudRate::B_9600,
+      NumDataBits::EIGHT,
+      Parity::NONE,
+      NumStopBits::ONE);
+   serialPort.SetTimeout(-1);  // blocking
+   serialPort.Open();
+   serialPort.Close();
    return "hello, world";
 }
 
 BOOST_PYTHON_MODULE(hello_ext)
 {
-    using namespace boost::python;
-    def("greet", greet);
+   using namespace boost::python;
+   def("greet", greet);
 }

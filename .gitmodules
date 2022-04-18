@@ -4,3 +4,6 @@
 [submodule "third-party/ArduinoSTL"]
 	path = third-party/ArduinoSTL
 	url = https://github.com/mike-matera/ArduinoSTL.git
+[submodule "third-party/CppLinuxSerial"]
+	path = third-party/CppLinuxSerial
+	url = git@github.com:daveshed/CppLinuxSerial.git
