@@ -10,7 +10,13 @@ target_include_directories(hello_ext
     PRIVATE ${CMAKE_SOURCE_DIR}/include
     PRIVATE ${CMAKE_SOURCE_DIR}/third-party/CppLinuxSerial/include
 )
-target_link_libraries(hello_ext python3 boost_python3 CppLinuxSerial)
+target_link_libraries(hello_ext
+    boost_python3
+    CppLinuxSerial
+    newton_host
+    python3
+)
+target_compile_options(hello_ext PRIVATE -Werror -Wall -Wextra)
 # install the shared library into the python package for distribution...
 install(TARGETS hello_ext
     DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/newton/hcomms/)

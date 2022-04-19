@@ -6,7 +6,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
         BOARD uno
     )
     generate_arduino_library(newton
-        SRCS node.cpp serialcomms.cpp
+        SRCS node.cpp targetcomms.cpp
         BOARD uno
     )
     generate_arduino_firmware(newton_release
@@ -21,13 +21,22 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
         ../third-party/ArduinoSTL/src
     )
 else()
-    # Build library for unit testing...
-    add_library(newton
+    # 1. Build library for unit testing...
+    add_library(newton_target
         node.cpp
-        serialcomms.cpp
+        targetcomms.cpp
     )
-    target_include_directories(newton PRIVATE ../include/)
+    target_include_directories(newton_target PUBLIC
+        ${CMAKE_SOURCE_DIR}/include/)
     # Only compile with warnings when testing. Otherwise we bring in errors
     # from third-party stuff.
-    target_compile_options(newton PRIVATE -Werror -Wall -Wextra)
+    target_compile_options(newton_target PRIVATE -Werror -Wall -Wextra)
+    # 2. Build library for python-bindings...
+    add_library(newton_host
+        hostcomms.cpp
+    )
+    target_include_directories(newton_host PUBLIC
+        ${CMAKE_SOURCE_DIR}/include/)
+    set_property(TARGET newton_host PROPERTY POSITION_INDEPENDENT_CODE ON)
+    target_compile_options(newton_host PRIVATE -Werror -Wall -Wextra)
 endif()

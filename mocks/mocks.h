@@ -6,11 +6,13 @@
 #include "ArduinoLinux.h"
 #include "logging.h"
 
+// allow tests to modify timestamp
+void millis(uint32_t value);
+
+#if 0
 // make the underlying serial handle available for tests to read buffer.
 extern SerialHandle serial_handle;
 
-// allow tests to modify timestamp
-void millis(uint32_t value);
 
 // Holds data in the underlying serial buffers exposed by Arduino.h Serial
 struct SerialHandle {
@@ -37,5 +39,5 @@ struct SerialHandle {
         std::cout << std::endl;
     };
 };
-
+#endif
 #endif // MOCKS_H

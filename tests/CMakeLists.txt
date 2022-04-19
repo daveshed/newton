@@ -21,7 +21,8 @@ else()
     )
     target_link_libraries(test_runner
         mocks
-        newton
+        newton_host
+        newton_target
         CppUTest
         CppUTestExt
     )

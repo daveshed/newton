@@ -2,12 +2,13 @@
 #define ARDUINOLINUX_H
 #include <cstdint>
 #include <cstddef>
+uint32_t millis(void);
+#if 0
 class SerialInterface;
 class SerialHandle;
 
 // functions and data available for code under test
 extern SerialInterface Serial;
-uint32_t millis(void);
 
 // Wraps the mock serial handle/buffer to provide code under test code with the
 // expected serial interface while allowing tests to access the handle directly
@@ -23,5 +24,5 @@ public:
 private:
     SerialHandle& handle_;
 };
-
+#endif
 #endif // ARDUINOLINUX_H

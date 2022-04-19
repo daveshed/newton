@@ -8,7 +8,8 @@
 #include "mocks.h"
 #include "sensor_stub.h"
 // code under test
-#include "serialcomms.h"
+#include "hostcomms.h"
+#include "targetcomms.h"
 
 #define TOLERANCE  0.001
 
@@ -63,7 +64,7 @@ private:
     std::deque<uint8_t> deque_;
 };
 
-class FakeSerial : public Newton::Serial {
+class FakeSerial : public Newton::SerialHandle {
 public:
     FakeSerial(Buffer& tx, Buffer& rx)
         : tx_(tx), rx_(rx) {};

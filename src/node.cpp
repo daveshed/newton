@@ -50,9 +50,9 @@ void Node::update(void)
 
 void Node::transmit(void)
 {
-    Serial.flush();
-    Measurement_t data = read();
-    Serial.write((uint8_t*)&data, sizeof(Measurement_t));
+    // Serial.flush();
+    // Measurement_t data = read();
+    // Serial.write((uint8_t*)&data, sizeof(Measurement_t));
 }
 
 uint8_t Node::checksum_(const uint8_t* data, uint16_t length)

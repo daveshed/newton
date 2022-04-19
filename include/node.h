@@ -2,20 +2,9 @@
 #define NODE_H
 
 #include "ArduinoUtils.h"
+#include "interfaces.h"
 
 namespace Newton {
-
-    typedef struct __attribute__((packed)) Measurement_s {
-        uint32_t timestamp;
-        float force;
-        int32_t raw_data;
-        uint8_t checksum;
-    } Measurement_t;
-
-    typedef struct {
-        float slope;
-        float intercept;
-    } Calibration_t;
 
     class Sensor
     {

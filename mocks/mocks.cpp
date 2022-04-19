@@ -2,10 +2,6 @@
 #include "ArduinoUtils.h"
 #include "mocks.h"
 
-// export internal serial handle for tests to access data
-SerialHandle serial_handle;
-// export Serial object that mocks Arduino.h Serial
-SerialInterface Serial = SerialInterface(serial_handle);
 // private data
 static uint32_t g_millis_value = 0L;
 
@@ -18,6 +14,12 @@ void millis(uint32_t value)
 {
     g_millis_value = value;
 }
+
+#if 0
+// export internal serial handle for tests to access data
+SerialHandle serial_handle;
+// export Serial object that mocks Arduino.h Serial
+SerialInterface Serial = SerialInterface(serial_handle);
 
 SerialInterface::SerialInterface(SerialHandle& h): handle_(h)
 {}
@@ -53,4 +55,5 @@ int SerialInterface::available(void)
 {
     return handle_.rx.size();
 }
+#endif
 #endif
