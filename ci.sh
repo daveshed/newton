@@ -48,9 +48,9 @@ function upload-release {
 }
 
 clean
-build-linux
-run-unit-tests
-clean
+# build-linux
+# run-unit-tests
+# clean
 build-fw
 upload-integration-test
-run-hw-tests
+# run-hw-tests

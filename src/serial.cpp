@@ -36,7 +36,10 @@ void ArduinoSerialHandle::register_callback(SerialDataCallback* callback)
     callback_ = callback;
 }
 
-SerialDataCallback* ArduinoSerialHandle::callback(void) const
+void ArduinoSerialHandle::notify(void) const
 {
-    return callback_;
+    if (callback_)
+    {
+        (*callback_)();
+    }
 }

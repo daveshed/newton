@@ -22,5 +22,5 @@ void loop(void)
 // notify listeners via this interrupt...
 void serialEvent(void)
 {
-    (*serial_handle.callback())();
+    serial_handle.notify();
 }

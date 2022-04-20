@@ -16,7 +16,7 @@ public:
     void receive(uint8_t* result, size_t n) override;
     size_t available(void) override;
     void register_callback(SerialDataCallback* callback) override;
-    SerialDataCallback* callback(void) const;
+    void notify(void) const;
 
 private:
     SerialDataCallback* callback_;
