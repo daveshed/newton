@@ -17,8 +17,6 @@ function build-linux {
         cd ${BUILD_ABSPATH} && \
         cmake -DCMAKE_CXX_FLAGS=-I$CUSTOM_INCLUDE_PATHS ../ && \
         make
-    # run tests...
-    cd ${BUILD_ABSPATH}/tests && ctest
     # install python extension module...
     cd ${BUILD_ABSPATH} && \
         make install
@@ -30,12 +28,29 @@ function build-fw {
         make
 }
 
-function flash-fw {
-    cd ${BUILD_ABSPATH} && make upload
+function run-unit-tests {
+    # run unit-tests...
+    cd ${BUILD_ABSPATH}/tests && ctest
+}
+
+function run-hw-tests {
+    # test python bindings...
+    python $PROJECT_ROOT/tools/hcomms/demo.py
+}
+
+function upload-integration-test {
+    # upload integration test...
+    cd ${BUILD_ABSPATH} && make test_integration-upload
+}
+
+function upload-release {
+    cd ${BUILD_ABSPATH} && make newton_release-upload
 }
 
 clean
 build-linux
+run-unit-tests
 clean
 build-fw
-# flash-fw
+upload-integration-test
+run-hw-tests
