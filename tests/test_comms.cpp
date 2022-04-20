@@ -9,7 +9,7 @@
 #include "sensor_stub.h"
 // code under test
 #include "hostcomms.h"
-#include "targetcomms.h"
+#include "node.h"
 
 #define TOLERANCE  0.001
 
@@ -124,8 +124,8 @@ TEST_GROUP(SerialCommsTestGroup)
     //                                    tx       rx
     FakeSerial target_serial = FakeSerial(host_rx, target_rx);
     FakeForceSensor sensor;
-    Newton::TargetInterface target =
-        Newton::TargetInterface(target_serial, sensor);
+    Newton::Node target =
+        Newton::Node(target_serial, sensor);
 
     void clear_buffers()
     {

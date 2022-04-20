@@ -6,7 +6,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
         BOARD uno
     )
     generate_arduino_library(newton
-        SRCS node.cpp targetcomms.cpp
+        SRCS node.cpp serial.cpp
         BOARD uno
     )
     generate_arduino_firmware(newton_release
@@ -24,7 +24,6 @@ else()
     # 1. Build library for unit testing...
     add_library(newton_target
         node.cpp
-        targetcomms.cpp
     )
     target_include_directories(newton_target PUBLIC
         ${CMAKE_SOURCE_DIR}/include/)

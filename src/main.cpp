@@ -1,19 +1,26 @@
 #include "node.h"
 #include "sensor.h"
+#include "serial.h"
 
 const int BAUD_RATE = 9600;
 
 HX711ForceSensor sensor;
-Newton::Node node(sensor);
+Newton::ArduinoSerialHandle serial_handle = Newton::ArduinoSerialHandle();
+Newton::Node node(serial_handle, sensor);
 
 void setup(void)
 {
     Serial.begin(BAUD_RATE);
-    node.begin();
+    sensor.begin();
 }
 
 void loop(void)
 {
     node.update();
-    node.transmit();
+}
+
+// notify listeners via this interrupt...
+void serialEvent(void)
+{
+    (*serial_handle.callback())();
 }
