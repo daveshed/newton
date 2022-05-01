@@ -6,15 +6,17 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
     # Build for Arduino..
     print_board_list()
     print_programmer_list()
-    add_subdirectory(third-party)
-else()
+    if(DEFINED ENV{HARDWARE_PLATFORM_PATH})
+        register_hardware_platform($ENV{HARDWARE_PLATFORM_PATH})
+    endif()
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     # Build for unit tests...
     set(CMAKE_BUILD_TYPE debug)  # compile with debug symbols
-    # Build python extensions...
-    add_subdirectory(tools/hcomms)
-    # Build serial library...
-    add_subdirectory(third-party/CppLinuxSerial)
+else()
+    message(FATAL_ERROR "Unrecognised system '${CMAKE_SYSTEM_NAME}'")
 endif()
 add_subdirectory(mocks)
 add_subdirectory(src)
 add_subdirectory(tests)
+add_subdirectory(third-party)
+add_subdirectory(tools)

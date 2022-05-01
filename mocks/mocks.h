@@ -4,7 +4,7 @@
 #ifndef MOCKS_H
 #define MOCKS_H
 
-#include "ArduinoLinux.h"
+#include "ArduinoUtils.h"
 
 // allow tests to modify timestamp
 void millis(uint32_t value);
