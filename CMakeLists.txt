@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(Newton C CXX)
 set(CMAKE_CXX_STANDARD 11)
+option(UNIT_TESTS "Build unit tests" ON)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
     # Build for Arduino..

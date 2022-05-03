@@ -9,7 +9,7 @@ HostInterface::HostInterface(Newton::SerialHandle& s) : serial_(s)
 
 void HostInterface::calibrate(Calibration_t calibration) const
 {
-    LOG_DEBUG("##### Host issuing calibration...\n");
+    LOG_DEBUG("##### Host issuing calibration...");
     // command type
     serial_.transmit(CALIBRATE_COMMAND);
     // payload
@@ -18,7 +18,7 @@ void HostInterface::calibrate(Calibration_t calibration) const
 
 Measurement_t HostInterface::get_reading(void)
 {
-    LOG_DEBUG("##### Host getting reading...\n");
+    LOG_DEBUG("##### Host getting reading...");
     // 1. issue the command...
     serial_.transmit(GET_READING_COMMAND);
     // 2. wait for the response - this needs consideration. What if the data

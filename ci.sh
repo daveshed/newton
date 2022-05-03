@@ -16,12 +16,11 @@ function build-linux {
     echo "####################### BUILDING FOR LINUX ##########################"
     # build tests and tools...
     # 1. pass python header paths - broken cmake.config for python?
-    # 2. disable some extra cpputest builds to speed things up
+    # 2. skipping unittests speeds up the build
     cd ${BUILD_ABSPATH} && \
         cmake \
             -DCMAKE_CXX_FLAGS=-I$CUSTOM_INCLUDE_PATHS \
-            -DTESTS=OFF \
-            -DEXTENSIONS=OFF ../ \
+            -DUNIT_TESTS=OFF ../ \
         && make
     # install python extension module (skips other installs)...
     # https://stackoverflow.com/a/9192877/18890664
@@ -34,6 +33,7 @@ function build-fw {
     cd ${BUILD_ABSPATH} && \
         HARDWARE_PLATFORM_PATH=${HARDWARE_PLATFORM_PATH} cmake \
             -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_ABSPATH} \
+            -DARDUINO_FOUND:BOOL=False \
             ../ && make
 }
 
@@ -63,7 +63,7 @@ function upload-release {
 clean
 build-linux
 # run-unit-tests
-# clean
-# build-fw
-# upload-integration-test
-# run-hw-tests
+clean
+build-fw
+upload-integration-test
+run-hw-tests

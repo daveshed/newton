@@ -3,9 +3,10 @@
 #include "serial.h"
 
 const int BAUD_RATE = 9600;
+const uint8_t I2C_ADDRESS = 0x05;
 
 HX711ForceSensor sensor;
-Newton::ArduinoSerialHandle serial_handle = Newton::ArduinoSerialHandle();
+Newton::ArduinoSerialHandle serial_handle = Newton::ArduinoSerialHandle(I2C_ADDRESS);
 Newton::Node node(serial_handle, sensor);
 
 void setup(void)

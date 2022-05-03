@@ -2,7 +2,8 @@
 #define LOGGING_H
 
 #ifdef __AVR__
-    #define LOG_DEBUG(x)
+    #include "ArduinoUtils.h"
+    #define LOG_DEBUG(x) (Serial.println(x))
 #else
     #include <iostream>
     #define LOG_DEBUG(x) (std::cout << x)

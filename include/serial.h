@@ -9,7 +9,8 @@ namespace Newton {
 
 class ArduinoSerialHandle : public SerialHandle {
 public:
-    ArduinoSerialHandle();
+    ArduinoSerialHandle(uint8_t address);
+    ~ArduinoSerialHandle(void);
     void transmit(uint8_t to_transmit) override;
     void transmit(const uint8_t* to_transmit, size_t n) override;
     uint8_t receive(void) override;

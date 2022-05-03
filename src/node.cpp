@@ -29,7 +29,7 @@ TargetDataReceived::TargetDataReceived(Node* iface) : iface_(iface)
 
 void TargetDataReceived::operator()(void)
 {
-    LOG_DEBUG("handling serial data...\n");
+    LOG_DEBUG("handling serial data...");
     iface_->handler_(iface_);
 }
 
@@ -61,7 +61,7 @@ void Node::update(void)
 
 void Node::handle_calibrate_(Node* iface)
 {
-    LOG_DEBUG("handling calibration request...\n");
+    LOG_DEBUG("handling calibration request...");
     // read the calibration data from serial when it's arrived...
     if (iface->serial().available() < sizeof(Calibration_t))
     {
@@ -77,7 +77,7 @@ void Node::handle_calibrate_(Node* iface)
 
 void Node::handle_get_reading_(Node* iface)
 {
-    LOG_DEBUG("handling get reading request...\n");
+    LOG_DEBUG("handling get reading request...");
     Measurement_t result = {
         millis(),
         iface->sensor().force(),
@@ -85,6 +85,7 @@ void Node::handle_get_reading_(Node* iface)
         0, // FIXME: calculate checksum
     };
     iface->serial().transmit((const uint8_t*)&result, sizeof(Measurement_t));
+    LOG_DEBUG("done.");
     // done
     iface->handler_ = handle_request_;
 }
@@ -99,9 +100,8 @@ void Node::handle_request_(Node* iface)
     // Not handling anything. Read the next command from serial...
     uint8_t command_type = iface->serial().receive();
     // execute it on this...
-    LOG_DEBUG("Got command <");
+    LOG_DEBUG("Got command:");
     LOG_DEBUG(static_cast<int>(command_type));
-    LOG_DEBUG(">\n");
     // Find the correct handler and call it to dispatch the data.
     iface->handler_ = handlers[command_type];
     iface->handler_(iface);
