@@ -36,7 +36,9 @@ void handle_requested()
     // dispatch any data queued in the transmit buffer...
     while (!tx_queue.empty())
     {
-        Wire.write(tx_queue.pop());
+        uint8_t to_write;
+        tx_queue.pop(&to_write);
+        Wire.write(to_write);
     }
 }
 

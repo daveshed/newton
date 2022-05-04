@@ -29,6 +29,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
 else()
     # 1. Build library for unit testing...
     add_library(newton_target
+        buffer.cpp
         node.cpp
     )
     target_include_directories(newton_target PUBLIC

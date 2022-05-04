@@ -32,7 +32,8 @@ void ArduinoSerialHandle::transmit(const uint8_t* to_transmit, size_t n)
 uint8_t ArduinoSerialHandle::receive(void)
 {
     LOG_DEBUG("Retrieving a byte...");
-    uint8_t result = rx_queue_.pop();
+    uint8_t result;
+    rx_queue_.pop(&result);
     return result;
 }
 

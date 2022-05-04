@@ -4,26 +4,40 @@
 using namespace Newton;
 
 FifoBuffer::FifoBuffer(void)
-{
-    clear();
-}
+: head_(0U)
+, tail_(0U)
+{ }
 
-uint8_t FifoBuffer::pop(void)
+int FifoBuffer::pop(uint8_t* result)
 {
-    uint8_t result = *head_;
+    if (empty())
+    {
+        return -1;
+    }
+    if (result)
+    {
+        *result = data_[head_];
+    }
     head_++;
-    return result;
+    head_ %= FIFO_SIZE;
+    return 0;
 }
 
-void FifoBuffer::push(uint8_t val)
+int FifoBuffer::push(uint8_t value)
 {
-    *tail_ = val;
+    if (full())
+    {
+        return -1;
+    }
+    data_[tail_] = value;
     tail_++;
+    tail_ %= FIFO_SIZE;
+    return 0;
 }
 
 void FifoBuffer::clear(void)
 {
-    head_ = tail_ = data_;
+    head_ = tail_ = 0U;
 }
 
 uint8_t FifoBuffer::size(void) const
@@ -34,4 +48,9 @@ uint8_t FifoBuffer::size(void) const
 bool FifoBuffer::empty(void) const
 {
     return head_ == tail_;
+}
+
+bool FifoBuffer::full(void) const
+{
+    return (tail_ + 1) % FIFO_SIZE == head_;
 }

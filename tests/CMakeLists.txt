@@ -16,6 +16,7 @@ else()
         # Test Runner executable...
         add_executable(test_runner
             runner.cpp
+            test_buffer.cpp
             test_comms.cpp
             test_node.cpp
         )
