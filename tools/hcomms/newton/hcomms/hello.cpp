@@ -1,13 +1,9 @@
-#include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <iostream>
 #include <map>
 #include <string>
-#include <vector>
-
-#include <thread>
 
 #include <boost/python/module.hpp>
 #include <boost/python/def.hpp>
@@ -37,7 +33,6 @@ std::string error_code_to_string(int code)
         return "UNKNOWN (" + std::to_string(code) + ")";
     }
 }
-
 
 // implement serial
 class ConcreteSerial : public Newton::SerialHandle {
@@ -70,7 +65,6 @@ public:
     }
     void transmit(uint8_t to_transmit) override
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
         printf("Transmitting byte <0x%02X>...\n", to_transmit);
         int result = i2c_write_byte(handle_, to_transmit);
         if (result < 0)
@@ -81,7 +75,6 @@ public:
     }
     void transmit(const uint8_t* to_transmit, size_t n) override
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
         std::cout << "Transmitting binary data..." << std::endl;
         if (n > BLOCK_SIZE)
         {
@@ -95,7 +88,6 @@ public:
     }
     uint8_t receive(void) override
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
         std::cout << "Receiving byte..." << std::endl;
         int result = i2c_read_byte(handle_);
         if (result < 0)
@@ -110,7 +102,6 @@ public:
     // const and the data is not?
     void receive(uint8_t* result, size_t n) override
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
         std::cout << "Receiving " << n << " bytes..." << std::endl;
         if (n > BLOCK_SIZE)
         {
@@ -142,27 +133,9 @@ private:
     unsigned handle_;
 };
 
-#if 0
 char const* greet()
 {
     auto serial_handle = ConcreteSerial(1, 0x11);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    // auto host = Newton::HostInterface(serial_handle);
-    // auto foo = host.get_reading();
-    // std::cout << foo.raw_data << std::endl;
-    serial_handle.transmit(0x22);
-    std::cout << serial_handle.receive() << std::endl;
-    uint8_t to_transmit[] = {0xDE, 0xAD, 0xBE, 0xFF};
-    serial_handle.transmit(to_transmit, 4);
-    uint8_t received[4] = {0x00};
-    serial_handle.receive(received, 4);
-    return "hello, world";
-}
-#endif
-char const* greet()
-{
-    auto serial_handle = ConcreteSerial(1, 0x11);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     auto host = Newton::HostInterface(serial_handle);
     Newton::Measurement_t measurement = host.get_reading();
     std::cout << measurement.raw_data << std::endl;
