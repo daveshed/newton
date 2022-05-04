@@ -11,7 +11,7 @@ TEST_GROUP(BufferTestGroup)
 
     void fill()
     {
-        for (uint8_t i = 0; i < (FIFO_SIZE - 1); ++i)
+        for (uint8_t i = 0; i < Newton::FifoBuffer::max_size; ++i)
         {
             buffer.push(i);
         }
@@ -19,7 +19,7 @@ TEST_GROUP(BufferTestGroup)
 
     void check_contents()
     {
-        for (uint8_t i = 0; i < (FIFO_SIZE - 1); ++i)
+        for (uint8_t i = 0; i < Newton::FifoBuffer::max_size; ++i)
         {
             uint8_t value;
             CHECK_EQUAL(0, buffer.pop(&value));
@@ -44,7 +44,7 @@ TEST(BufferTestGroup, TestFilledBufferReportsFull)
 {
     fill();
     CHECK(buffer.full());
-    CHECK_EQUAL((FIFO_SIZE - 1), buffer.size());
+    CHECK_EQUAL(Newton::FifoBuffer::max_size, buffer.size());
 }
 
 TEST(BufferTestGroup, TestFillingDrainingBufferDataConsistent)

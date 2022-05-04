@@ -19,7 +19,7 @@ int FifoBuffer::pop(uint8_t* result)
         *result = data_[head_];
     }
     head_++;
-    head_ %= FIFO_SIZE;
+    head_ %= length_;
     return 0;
 }
 
@@ -31,7 +31,7 @@ int FifoBuffer::push(uint8_t value)
     }
     data_[tail_] = value;
     tail_++;
-    tail_ %= FIFO_SIZE;
+    tail_ %= length_;
     return 0;
 }
 
@@ -52,5 +52,5 @@ bool FifoBuffer::empty(void) const
 
 bool FifoBuffer::full(void) const
 {
-    return (tail_ + 1) % FIFO_SIZE == head_;
+    return (tail_ + 1) % length_ == head_;
 }
