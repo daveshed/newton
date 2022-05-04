@@ -1,6 +1,6 @@
 # Build our pyhon->c++ bindings for serial comms on the host
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    find_library(PIGPIO NAMES pigpio)
+    find_library(PIGPIO NAMES pigpiod_if)
     find_library(PYTHON3 NAMES python3 python3.9)
     find_library(BOOST_PYTHON3 NAMES boost_python3 boost_python39)
     add_library(hello_ext SHARED newton/hcomms/hello.cpp)

@@ -11,7 +11,7 @@
 
 #include <boost/python/module.hpp>
 #include <boost/python/def.hpp>
-#include <pigpio.h>
+#include <pigpiod_if.h>
 
 #include "hostcomms.h"
 
@@ -44,13 +44,15 @@ class ConcreteSerial : public Newton::SerialHandle {
 public:
     ConcreteSerial(unsigned i2c_bus, unsigned i2c_address)
     {
-        int gpio_status = gpioInitialise();
+        // connect on localhost...
+        int gpio_status = pigpio_start(NULL, NULL);
         if (gpio_status < 0)
         {
             throw std::runtime_error(
-                "Failed to initialise gpio: " + error_code_to_string(gpio_status));
+                "Failed to initialise gpio: "
+                + error_code_to_string(gpio_status));
         }
-        int i2c_status = i2cOpen(i2c_bus, i2c_address, 0);
+        int i2c_status = i2c_open(i2c_bus, i2c_address, 0);
         if (i2c_status < 0)
         {
             throw std::runtime_error(
@@ -60,17 +62,17 @@ public:
     }
     ~ConcreteSerial()
     {
-        if (i2cClose(handle_) != 0)
+        if (i2c_close(handle_) != 0)
         {
             std::cout << "Failed to close device" << std::endl;
         }
-        gpioTerminate();
+        pigpio_stop();
     }
     void transmit(uint8_t to_transmit) override
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
         printf("Transmitting byte <0x%02X>...\n", to_transmit);
-        int result = i2cWriteByte(handle_, to_transmit);
+        int result = i2c_write_byte(handle_, to_transmit);
         if (result < 0)
         {
             throw std::runtime_error(
@@ -85,7 +87,7 @@ public:
         {
             throw std::runtime_error("Exceeded block size");
         }
-        int result = i2cWriteDevice(handle_, (char*)to_transmit, n);
+        int result = i2c_write_device(handle_, (char*)to_transmit, n);
         if (result < 0)
         {
             throw std::runtime_error("Write failed");
@@ -95,7 +97,7 @@ public:
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(20));
         std::cout << "Receiving byte..." << std::endl;
-        int result = i2cReadByte(handle_);
+        int result = i2c_read_byte(handle_);
         if (result < 0)
         {
             throw std::runtime_error(
@@ -114,7 +116,7 @@ public:
         {
             throw std::runtime_error("Exceeded read block size");
         }
-        int status = i2cReadDevice(handle_, (char*)result, n);
+        int status = i2c_read_device(handle_, (char*)result, n);
         if (status < 0)
         {
             throw std::runtime_error(
