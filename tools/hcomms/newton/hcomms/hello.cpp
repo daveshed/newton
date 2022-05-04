@@ -68,6 +68,7 @@ public:
     }
     void transmit(uint8_t to_transmit) override
     {
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
         printf("Transmitting byte <0x%02X>...\n", to_transmit);
         int result = i2cWriteByte(handle_, to_transmit);
         if (result < 0)
@@ -78,12 +79,12 @@ public:
     }
     void transmit(const uint8_t* to_transmit, size_t n) override
     {
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
         std::cout << "Transmitting binary data..." << std::endl;
         if (n > BLOCK_SIZE)
         {
             throw std::runtime_error("Exceeded block size");
         }
-        // writing to reg 0.
         int result = i2cWriteDevice(handle_, (char*)to_transmit, n);
         if (result < 0)
         {
@@ -92,6 +93,7 @@ public:
     }
     uint8_t receive(void) override
     {
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
         std::cout << "Receiving byte..." << std::endl;
         int result = i2cReadByte(handle_);
         if (result < 0)
@@ -101,42 +103,12 @@ public:
         }
         std::cout << "Got byte '" << result << "'" << std::endl;
         return result;
-
-        #if 0
-        auto start = std::chrono::steady_clock::now();
-        auto timeout = std::chrono::milliseconds(1000);
-        int result;
-        while (true)
-        {
-            auto elapsed = std::chrono::steady_clock::now() - start;
-            if (elapsed > timeout)
-            {
-                throw std::runtime_error("timeout");
-            }
-            result = i2cReadByte(handle_);
-            if (result == PI_I2C_READ_FAILED)
-            {
-                std::this_thread::sleep_for(std::chrono::milliseconds(50));
-                continue;
-            }
-            else
-            {
-                break;
-            }
-        }
-        if (result < 0)
-        {
-            throw std::runtime_error(
-                "Read failed: " + error_code_to_string(result));
-        }
-        std::cout << "Got byte '" << result << "'" << std::endl;
-        return result;
-        #endif
     }
     // This signature is not quite right. Surely you mean that the pointer is
     // const and the data is not?
     void receive(uint8_t* result, size_t n) override
     {
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
         std::cout << "Receiving " << n << " bytes..." << std::endl;
         if (n > BLOCK_SIZE)
         {
@@ -168,6 +140,7 @@ private:
     unsigned handle_;
 };
 
+#if 0
 char const* greet()
 {
     auto serial_handle = ConcreteSerial(1, 0x11);
@@ -183,35 +156,20 @@ char const* greet()
     serial_handle.receive(received, 4);
     return "hello, world";
 }
-
-#if 0
-void test()
-{
-    CppLinuxSerial::SerialPort serial_port(
-       "/dev/ttyACM0",
-       CppLinuxSerial::BaudRate::B_9600,
-       CppLinuxSerial::NumDataBits::EIGHT,
-       CppLinuxSerial::Parity::NONE,
-       CppLinuxSerial::NumStopBits::ONE);
-    serial_port.SetTimeout(-1);  // blocking
-    serial_port.Open();
-    while (true)
-    {
-        std::vector<uint8_t> data;
-        serial_port.ReadBinary(data);
-        for (auto el : data)
-        {
-            std::cout << el;
-        }
-        std::cout << std::endl;
-    }
-}
 #endif
+char const* greet()
+{
+    auto serial_handle = ConcreteSerial(1, 0x11);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    auto host = Newton::HostInterface(serial_handle);
+    Newton::Measurement_t measurement = host.get_reading();
+    std::cout << measurement.raw_data << std::endl;
+    return "hello, world";
+}
 
 // Build a shared object with this exact name
 BOOST_PYTHON_MODULE(hello_ext)
 {
     using namespace boost::python;
     def("greet", greet);
-    // def("test", test);
 }

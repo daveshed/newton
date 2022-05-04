@@ -6,7 +6,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
         BOARD uno
     )
     generate_arduino_library(newton
-        SRCS node.cpp serial.cpp
+        SRCS buffer.cpp node.cpp serial.cpp
         BOARD uno
     )
     generate_arduino_library(i2c
@@ -23,6 +23,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
     include_directories(
         ../include
         ../third-party
+        ../third-party/ArduinoSTL/src
         ${ARDUINO_LIBRARIES_PATH}/Wire/src
     )
 else()

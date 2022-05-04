@@ -20,7 +20,7 @@ function build-linux {
     cd ${BUILD_ABSPATH} && \
         cmake \
             -DCMAKE_CXX_FLAGS=-I$CUSTOM_INCLUDE_PATHS \
-            -DUNIT_TESTS=OFF ../ \
+            -DUNIT_TESTS=ON ../ \
         && make
     # install python extension module (skips other installs)...
     # https://stackoverflow.com/a/9192877/18890664
@@ -62,8 +62,8 @@ function upload-release {
 
 clean
 build-linux
-# run-unit-tests
-clean
-build-fw
-upload-integration-test
-run-hw-tests
+run-unit-tests
+# clean
+# build-fw
+# upload-integration-test
+# run-hw-tests

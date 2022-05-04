@@ -2,6 +2,7 @@
 #ifndef SERIAL_H
 #define SERIAL_H
 #include "ArduinoUtils.h"
+#include "buffer.h"
 #include "interfaces.h"
 #include "node.h"
 
@@ -9,8 +10,7 @@ namespace Newton {
 
 class ArduinoSerialHandle : public SerialHandle {
 public:
-    ArduinoSerialHandle(uint8_t address);
-    ~ArduinoSerialHandle(void);
+    ArduinoSerialHandle(FifoBuffer& tx, FifoBuffer& rx);
     void transmit(uint8_t to_transmit) override;
     void transmit(const uint8_t* to_transmit, size_t n) override;
     uint8_t receive(void) override;
@@ -21,6 +21,8 @@ public:
 
 private:
     SerialDataCallback* callback_;
+    FifoBuffer& tx_queue_;
+    FifoBuffer& rx_queue_;
 };
 
 } // namespace

@@ -1,44 +1,44 @@
 // implement serial interface required by node
-#include <Wire.h>
-
 #include "ArduinoUtils.h"
+#include "buffer.h"
 #include "logging.h"
 #include "serial.h"
 
 using namespace Newton;
 
-ArduinoSerialHandle::ArduinoSerialHandle(uint8_t address) : callback_(nullptr)
-{
-    LOG_DEBUG("Opening i2c connection...");
-    Wire.begin(address);
-}
-
-ArduinoSerialHandle::~ArduinoSerialHandle(void)
-{
-    LOG_DEBUG("Closing i2c connection...");
-    Wire.end();
-}
+ArduinoSerialHandle::ArduinoSerialHandle(
+    FifoBuffer& tx, FifoBuffer& rx)
+: callback_(nullptr)
+, tx_queue_(tx)
+, rx_queue_(rx)
+{ }
 
 void ArduinoSerialHandle::transmit(uint8_t to_transmit)
 {
-    LOG_DEBUG("Transmitting byte...");
+    LOG_DEBUG("Queuing byte to transmit...");
     LOG_DEBUG(to_transmit);
-    Wire.write(to_transmit);
+    tx_queue_.push(to_transmit);
 }
 
 void ArduinoSerialHandle::transmit(const uint8_t* to_transmit, size_t n)
 {
-    LOG_DEBUG("Transmitting bytes...");
-    Wire.write(to_transmit, n);
+    LOG_DEBUG("Queuing bytes to transmit...");
+    for (size_t i = 0; i < n; ++i)
+    {
+        transmit(to_transmit[i]);
+    }
 }
 
 uint8_t ArduinoSerialHandle::receive(void)
 {
-    return Wire.read();
+    LOG_DEBUG("Retrieving a byte...");
+    uint8_t result = rx_queue_.pop();
+    return result;
 }
 
 void ArduinoSerialHandle::receive(uint8_t* result, size_t n)
 {
+    LOG_DEBUG("Retrieving bytes...");
     for (size_t i = 0; i < n; ++i)
     {
         result[i] = receive();
@@ -47,7 +47,7 @@ void ArduinoSerialHandle::receive(uint8_t* result, size_t n)
 
 size_t ArduinoSerialHandle::available(void)
 {
-    return Wire.available();
+    return rx_queue_.size();
 }
 
 void ArduinoSerialHandle::register_callback(SerialDataCallback* callback)
