@@ -34,7 +34,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
     include_directories(
         ../include
         ../mocks
-        ../third-party
+        ../third-party/HX711/src
         ${ARDUINO_LIBRARIES_PATH}/Wire/src
     )
 else()
