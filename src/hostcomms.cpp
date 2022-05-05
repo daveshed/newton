@@ -16,7 +16,7 @@ void HostInterface::calibrate(Calibration_t calibration) const
     serial_.transmit((const uint8_t*)&calibration, sizeof(Calibration_t));
 }
 
-Measurement_t HostInterface::get_reading(void)
+Measurement_t HostInterface::get_reading(void) const
 {
     LOG_DEBUG("##### Host getting reading...");
     // 1. issue the command...

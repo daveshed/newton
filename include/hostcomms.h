@@ -8,7 +8,7 @@ class HostInterface {
 public:
     explicit HostInterface(SerialHandle& serial);
     void calibrate(Calibration_t calibration) const;
-    Measurement_t get_reading(void);
+    Measurement_t get_reading(void) const;
 private:
     SerialHandle& serial_;
 };

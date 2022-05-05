@@ -1,2 +1,3 @@
 from newton.hcomms import hcomms_ext
-print(hcomms_ext.greet())
+interface = hcomms_ext.HostInterface(0x11)
+print(interface.get_reading().raw_data)
