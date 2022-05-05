@@ -4,7 +4,8 @@ set -ueo pipefail
 PROJECT_ROOT=$(dirname $(realpath $0))
 BUILD_ABSPATH=${PROJECT_ROOT}/build
 CUSTOM_INCLUDE_PATHS=/usr/include/python3.9/
-TOOLCHAIN_ABSPATH=${PROJECT_ROOT}/arduino-cmake/cmake/ArduinoToolchain.cmake
+TOOLCHAIN_BASEPATH=${PROJECT_ROOT}/third-party/arduino-cmake/cmake
+TOOLCHAIN_ABSPATH=${TOOLCHAIN_BASEPATH}/ArduinoToolchain.cmake
 HARDWARE_PLATFORM_PATH=/usr/share/arduino/hardware/arduino/avr
 
 function clean {
@@ -20,7 +21,7 @@ function build-linux {
     cd ${BUILD_ABSPATH} && \
         cmake \
             -DCMAKE_CXX_FLAGS=-I$CUSTOM_INCLUDE_PATHS \
-            -DUNIT_TESTS=ON ../ \
+            -DUNIT_TESTS=OFF ../ \
         && make
     # install python extension module (skips other installs)...
     # https://stackoverflow.com/a/9192877/18890664
@@ -60,10 +61,11 @@ function upload-release {
     cd ${BUILD_ABSPATH} && make release_fw-upload
 }
 
-clean
-build-linux
-run-unit-tests
 # clean
-# build-fw
-# upload-integration-test
+# build-linux
+# run-unit-tests
+clean
+build-fw
+upload-integration-test
 # run-hw-tests
+# upload-release

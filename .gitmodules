@@ -1,5 +1,5 @@
 [submodule "arduino-cmake"]
-	path = arduino-cmake
+	path = third-party/arduino-cmake
 	url = git@github.com:daveshed/arduino-cmake.git
 [submodule "third-party/cpputest"]
 	path = third-party/cpputest
