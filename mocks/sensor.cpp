@@ -1,7 +1,13 @@
 // stub implementation
 #include "ArduinoUtils.h"
+
 #include "sensor_stub.h"
 #include "node.h"
+
+Newton::Sensor* Newton::make_force_sensor(void)
+{
+    return new FakeForceSensor();
+}
 
 FakeForceSensor::FakeForceSensor() {};
 

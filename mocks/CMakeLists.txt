@@ -6,7 +6,6 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
     ) # does not work with target_include_directories
     include_directories(
         ../include
-        ../third-party/ArduinoSTL/src
     )
 else()
     add_library(mocks

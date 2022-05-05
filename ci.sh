@@ -52,12 +52,12 @@ function run-hw-tests {
 function upload-integration-test {
     echo "################# UPLOADING INTEGRATION TEST ########################"
     # upload integration test...
-    cd ${BUILD_ABSPATH} && make test_integration-upload
+    cd ${BUILD_ABSPATH} && make test_fw-upload
 }
 
 function upload-release {
     echo "###################### UPLOADING RELEASE ############################"
-    cd ${BUILD_ABSPATH} && make newton_release-upload
+    cd ${BUILD_ABSPATH} && make release_fw-upload
 }
 
 clean

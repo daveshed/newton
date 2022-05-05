@@ -5,8 +5,11 @@
 
 namespace Newton {
 
-class TargetDataReceived;
+// forward declarations
 class Node;
+class Sensor;
+class TargetDataReceived;
+Sensor* make_force_sensor(void);
 
 /*
  * Callback registered by the host to handle serial data from the target.
@@ -26,6 +29,7 @@ public:
     Sensor(void);
     virtual void begin(void) = 0;
     virtual int32_t raw_data(void) const = 0;
+    virtual void raw_data(int32_t value) = 0;
     virtual void update(void) = 0;
     float force(void) const;
     void calibrate(Calibration_t& calibration);

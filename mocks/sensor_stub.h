@@ -9,7 +9,6 @@ public:
     void begin(void) override;
     int32_t raw_data(void) const override;
     void update(void) override;
-    // mock method only available to tests...
     void raw_data(int32_t value);
 
 private:

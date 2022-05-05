@@ -1,31 +1,20 @@
-#include "node.h"
-#include "sensor.h"
-#include "serial.h"
+#include <Wire.h>
 
-const int BAUD_RATE = 9600;
-const uint8_t I2C_ADDRESS = 0x05;
+#include "application.h"
 
-#if 0
-HX711ForceSensor sensor;
-Newton::ArduinoSerialHandle serial_handle = Newton::ArduinoSerialHandle(I2C_ADDRESS);
-Newton::Node node(serial_handle, sensor);
+const uint8_t I2C_ADDRESS = 0x11;
+Newton::Application app;
 
 void setup(void)
 {
-    Serial.begin(BAUD_RATE);
-    sensor.begin();
+    app.setup();
+    // initialise i2c comms...
+    Wire.begin(I2C_ADDRESS);
+    Wire.onReceive([](int n){app.handle_received(n);});
+    Wire.onRequest([](){app.handle_requested();});
 }
 
 void loop(void)
 {
-    node.update();
+    app.loop();
 }
-
-// notify listeners via this interrupt...
-void serialEvent(void)
-{
-    serial_handle.notify();
-}
-#endif
-void setup() {}
-void loop() {}

@@ -1,37 +1,23 @@
-if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
-    # Integration test build...
-    generate_arduino_firmware(test_integration
-        SRCS test_integration.cpp
-        LIBS newton sensor_stub i2c
-        BOARD uno
-        PORT /dev/ttyACM0
+# Unit test build only
+if((${CMAKE_SYSTEM_NAME} MATCHES "Linux") AND UNIT_TESTS)
+    # Test Runner executable...
+    add_executable(test_runner
+        runner.cpp
+        test_buffer.cpp
+        test_comms.cpp
+        test_node.cpp
     )
-    include_directories(
-        ../include
-        ../mocks
-        ${ARDUINO_LIBRARIES_PATH}/Wire/src
+    target_link_libraries(test_runner
+        mocks
+        newton_host
+        newton_target
+        CppUTest
+        CppUTestExt
     )
-else()
-    if(UNIT_TESTS)
-        # Test Runner executable...
-        add_executable(test_runner
-            runner.cpp
-            test_buffer.cpp
-            test_comms.cpp
-            test_node.cpp
-        )
-        target_link_libraries(test_runner
-            mocks
-            newton_host
-            newton_target
-            CppUTest
-            CppUTestExt
-        )
-        target_compile_options(test_runner PRIVATE -Werror -Wall -Wextra)
-        target_include_directories(test_runner PUBLIC ../mocks/)
+    target_compile_options(test_runner PRIVATE -Werror -Wall -Wextra)
+    target_include_directories(test_runner PUBLIC ../mocks/)
 
-        # CTest
-        enable_testing()
-        add_test(MyTests test_runner -c)
-    endif()
+    # CTest
+    enable_testing()
+    add_test(MyTests test_runner -c)
 endif()

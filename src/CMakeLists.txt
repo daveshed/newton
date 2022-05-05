@@ -1,29 +1,40 @@
 if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
-    # Arduino build for release...
-    generate_arduino_library(sensor
-        SRCS sensor.cpp
-        LIBS HX711
-        BOARD uno
-    )
-    generate_arduino_library(newton
-        SRCS buffer.cpp node.cpp serial.cpp
-        BOARD uno
-    )
+    # Libraries...
     generate_arduino_library(i2c
         SRCS ${ARDUINO_LIBRARIES_PATH}/Wire/src/Wire.cpp
              ${ARDUINO_LIBRARIES_PATH}/Wire/src/utility/twi.c
         BOARD uno
     )
-    generate_arduino_firmware(newton_release
-        SRCS main.cpp
-        LIBS newton sensor i2c
+    generate_arduino_library(sensor_hx711
+        SRCS sensor.cpp
+        LIBS HX711
+        BOARD uno
+    )
+    # Firmware executables...
+    generate_arduino_firmware(test_fw
+        SRCS application.cpp
+             buffer.cpp
+             main.cpp
+             node.cpp
+             serial.cpp
+        LIBS sensor_stub i2c
+        BOARD uno
+        PORT /dev/ttyACM0
+    )
+    generate_arduino_firmware(release_fw
+        SRCS application.cpp
+             buffer.cpp
+             main.cpp
+             node.cpp
+             serial.cpp
+        LIBS sensor_hx711 i2c
         BOARD uno
         PORT /dev/ttyACM0
     )
     include_directories(
         ../include
+        ../mocks
         ../third-party
-        ../third-party/ArduinoSTL/src
         ${ARDUINO_LIBRARIES_PATH}/Wire/src
     )
 else()

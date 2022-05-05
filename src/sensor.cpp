@@ -15,21 +15,32 @@ enum Gain {
     CH_A_MID_GAIN = 64,
 };
 
+Newton::Sensor* Newton::make_force_sensor(void)
+{
+    return new HX711ForceSensor();
+}
+
 HX711ForceSensor::HX711ForceSensor()
 : device_()
-{};
+{}
 
 void HX711ForceSensor::begin(void)
 {
     device_.begin(SENSOR_DOUT_PIN, SENSOR_SCK_PIN, CH_A_HIGH_GAIN);
-};
+}
 
 void HX711ForceSensor::update(void)
 {
     raw_data_ = device_.read();
-};
+}
 
 int32_t HX711ForceSensor::raw_data(void) const
 {
     return raw_data_;
-};
+}
+
+void HX711ForceSensor::raw_data(int32_t value)
+{
+    // cannot set the raw data in the real device
+    return;
+}

@@ -11,6 +11,7 @@ public:
     void begin(void) override;
     void update(void) override;
     int32_t raw_data(void) const override;
+    void raw_data(int32_t value) override;
 
 private:
     HX711 device_;
