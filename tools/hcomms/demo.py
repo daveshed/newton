@@ -1,2 +1,2 @@
-from newton.hcomms import hello_ext
-print(hello_ext.greet())
+from newton.hcomms import hcomms_ext
+print(hcomms_ext.greet())
