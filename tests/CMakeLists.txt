@@ -4,7 +4,6 @@ if((${CMAKE_SYSTEM_NAME} MATCHES "Linux") AND UNIT_TESTS)
     add_executable(test_runner
         runner.cpp
         test_buffer.cpp
-        test_comms.cpp
         test_node.cpp
     )
     target_link_libraries(test_runner
@@ -15,7 +14,7 @@ if((${CMAKE_SYSTEM_NAME} MATCHES "Linux") AND UNIT_TESTS)
         CppUTestExt
     )
     target_compile_options(test_runner PRIVATE -Werror -Wall -Wextra)
-    target_include_directories(test_runner PUBLIC ../mocks/)
+    target_include_directories(test_runner PRIVATE ../mocks/)
 
     # CTest
     enable_testing()

@@ -1,27 +1,16 @@
 #ifndef NODE_H
 #define NODE_H
 #include "ArduinoUtils.h"
+#include "buffer.h"
 #include "interfaces.h"
 
 namespace Newton {
 
-// forward declarations
+class DataRecorder;
 class Node;
+class NodeCodec;
 class Sensor;
-class TargetDataReceived;
 Sensor* make_force_sensor(void);
-
-/*
- * Callback registered by the host to handle serial data from the target.
- */
-class TargetDataReceived : public SerialDataCallback {
-public:
-    explicit TargetDataReceived(Node* iface);
-    void operator()(void) override;
-
-private:
-    Node* iface_;
-};
 
 class Sensor
 {
@@ -31,7 +20,7 @@ public:
     virtual int32_t raw_data(void) const = 0;
     virtual void raw_data(int32_t value) = 0;
     virtual void update(void) = 0;
-    float force(void) const;
+    virtual float force(void) const;
     void calibrate(Calibration_t& calibration);
     Calibration_t calibration(void) const;
 
@@ -40,32 +29,54 @@ protected:
     Calibration_t calibration_;
 };
 
-class Node {
-// handles serial data byte-by-byte
-typedef void(*data_handler)(Node* iface);
+// Responsible for handling data over the serial connection - declaration should live in a private
+// header.
+class NodeCodec {
 public:
-    friend TargetDataReceived;
-    explicit Node(SerialHandle& serial, Sensor& sensor);
+    typedef void (NodeCodec::*handler_type)(void);
+    NodeCodec(Node* node);
+    void update(void);
+private:
+    // serial data handlers
+    void handle_calibrate_(void);
+    void handle_get_reading_(void);
+    void handle_request_(void);
+    void handle_read_stored_(void);
+    void handle_transmit_stored_payload_(void);
+    // helpers
+    void send_response_(const ResponsePacket::Header& header) const;
+    void send_response_(Response type, payload_size_t size, const uint8_t* payload) const;
+    // private data
+    Node* node_;
+    CommandPacket::Header header_;
+    handler_type handler_;
+};
+
+class Node {
+public:
+    constexpr static float threshold = 10.0F;
+    constexpr static uint8_t samples = 100U;
+
+    explicit Node(FifoBuffer<uint8_t>& tx, FifoBuffer<uint8_t>& rx, Sensor& sensor);
     void update(void);
     Sensor& sensor(void) const;
-    SerialHandle& serial(void) const;
+    FifoBuffer<uint8_t>& tx(void) const;
+    FifoBuffer<uint8_t>& rx(void) const;
+    FifoBuffer<Measurement_t>& buffer(void);
+    Measurement_t reading(void) const;
+    bool is_measuring(void) const;
 
 private:
-    // serial data handlers...
-    static void handle_calibrate_(Node* iface);
-    static void handle_get_reading_(Node* iface);
-    static void handle_request_(Node* iface);
-
+    // helpers
     uint8_t checksum_(const uint8_t* data, uint16_t length);
 
-    SerialHandle& serial_;
+    FifoBuffer<uint8_t>& tx_;
+    FifoBuffer<uint8_t>& rx_;
+    FifoBuffer<Measurement_t> buffer_;
     Sensor& sensor_;
-    data_handler handler_ = handle_request_;
-    // Even though this a pointer to this object is handed over to the serial
-    // class immediately on construction, we need to retain ownership so it's
-    // not deleted.
-    TargetDataReceived serial_listener_;
+    NodeCodec codec_;
+    Measurement_t reading_;
 };
 
 } // namespace
-#endif  // TARGETCOMMS_H
+#endif  // NODE_H

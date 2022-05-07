@@ -1,3 +1,7 @@
+# sublime
+*.sublime-workspace
+sftp-config.json
+
 # build artifacts
 build/**
 **/*.so

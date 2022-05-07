@@ -9,7 +9,7 @@
 #include "ArduinoUtils.h"
 #include "mocks.h"
 
-static uint32_t g_millis_value = 0L;
+static uint32_t g_millis_value = 0UL;
 
 uint32_t millis(void)
 {

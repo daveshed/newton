@@ -6,7 +6,7 @@
     #define LOG_DEBUG(x) (Serial.println(x))
 #else
     #include <iostream>
-    #define LOG_DEBUG(x) (std::cout << x)
+    #define LOG_DEBUG(x) (std::cout << x << std::endl)
 #endif
 
 #endif // LOGGING_H

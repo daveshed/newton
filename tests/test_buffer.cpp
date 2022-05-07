@@ -7,11 +7,11 @@
 
 TEST_GROUP(BufferTestGroup)
 {
-    Newton::FifoBuffer buffer;
+    Newton::FifoBuffer<uint8_t> buffer;
 
     void fill()
     {
-        for (uint8_t i = 0; i < Newton::FifoBuffer::max_size; ++i)
+        for (uint8_t i = 0; i < Newton::FifoBuffer<uint8_t>::max_size; ++i)
         {
             buffer.push(i);
         }
@@ -19,7 +19,7 @@ TEST_GROUP(BufferTestGroup)
 
     void check_contents()
     {
-        for (uint8_t i = 0; i < Newton::FifoBuffer::max_size; ++i)
+        for (uint8_t i = 0; i < Newton::FifoBuffer<uint8_t>::max_size; ++i)
         {
             uint8_t value;
             CHECK_EQUAL(0, buffer.pop(&value));
@@ -44,7 +44,7 @@ TEST(BufferTestGroup, TestFilledBufferReportsFull)
 {
     fill();
     CHECK(buffer.full());
-    CHECK_EQUAL(Newton::FifoBuffer::max_size, buffer.size());
+    CHECK_EQUAL(Newton::FifoBuffer<uint8_t>::max_size, buffer.size());
 }
 
 TEST(BufferTestGroup, TestFillingDrainingBufferDataConsistent)
@@ -79,4 +79,32 @@ TEST(BufferTestGroup, TestCannotPushToFullBuffer)
     fill();
     CHECK(buffer.full());
     CHECK_EQUAL(-1, buffer.push(0x00));
+}
+
+TEST(BufferTestGroup, TestPoppingArrayFromFilledBufferReturnsExpected)
+{
+    fill();
+    const size_t initial_size = buffer.size();
+    const size_t n_elements = 10;
+    uint8_t actual[n_elements] = {0U};
+    buffer.pop(actual, n_elements);
+    uint8_t expected[n_elements] = {0U};
+    for (uint8_t i = 0; i < n_elements; i++)
+    {
+        expected[i] = i;
+    }
+    MEMCMP_EQUAL(expected, actual, n_elements);
+    CHECK_EQUAL(initial_size - n_elements, buffer.size());
+}
+
+TEST(BufferTestGroup, TestPushingArrayIntoEmptyBufferContainsExpected)
+{
+    const size_t max_size = Newton::FifoBuffer<uint8_t>::max_size;
+    uint8_t data[max_size];
+    for (uint8_t i = 0; i < max_size; ++i)
+    {
+        data[i] = i;
+    }
+    buffer.push(data, max_size);
+    check_contents();
 }

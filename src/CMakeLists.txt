@@ -13,7 +13,6 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
     # Firmware executables...
     generate_arduino_firmware(test_fw
         SRCS application.cpp
-             buffer.cpp
              main.cpp
              node.cpp
              serial.cpp
@@ -23,7 +22,6 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
     )
     generate_arduino_firmware(release_fw
         SRCS application.cpp
-             buffer.cpp
              main.cpp
              node.cpp
              serial.cpp
@@ -40,20 +38,17 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
 else()
     # 1. Build library for unit testing...
     add_library(newton_target
-        buffer.cpp
         node.cpp
     )
-    target_include_directories(newton_target PUBLIC
-        ${CMAKE_SOURCE_DIR}/include/)
+    target_include_directories(newton_target PUBLIC ../include/)
     # Only compile with warnings when testing. Otherwise we bring in errors
     # from third-party stuff.
-    target_compile_options(newton_target PRIVATE -Werror -Wall -Wextra)
+    target_compile_options(newton_target PUBLIC -Werror -Wall -Wextra)
     # 2. Build library for python-bindings...
     add_library(newton_host
         hostcomms.cpp
     )
-    target_include_directories(newton_host PUBLIC
-        ${CMAKE_SOURCE_DIR}/include/)
+    target_include_directories(newton_host PUBLIC ../include/)
     set_property(TARGET newton_host PROPERTY POSITION_INDEPENDENT_CODE ON)
     target_compile_options(newton_host PRIVATE -Werror -Wall -Wextra)
 endif()
