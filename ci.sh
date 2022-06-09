@@ -61,11 +61,11 @@ function upload-release {
     cd ${BUILD_ABSPATH} && make release_fw-upload
 }
 
-clean
-build-linux
-run-unit-tests
 # clean
-# build-fw
-# upload-integration-test
+# build-linux
+# run-unit-tests
+clean
+build-fw
+upload-integration-test
 # run-hw-tests
 # upload-release

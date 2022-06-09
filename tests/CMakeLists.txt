@@ -8,7 +8,6 @@ if((${CMAKE_SYSTEM_NAME} MATCHES "Linux") AND UNIT_TESTS)
     )
     target_link_libraries(test_runner
         mocks
-        newton_host
         newton_target
         CppUTest
         CppUTestExt

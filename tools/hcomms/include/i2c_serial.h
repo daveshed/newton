@@ -1,7 +1,7 @@
 // Concrete serial comms interface for hcomms
 #pragma once
 #include <cstdint>
-#include "interfaces.h"
+#include "hcomms.h"
 
 namespace HostComms {
 
@@ -14,7 +14,6 @@ public:
     uint8_t receive(void) override;
     void receive(uint8_t* result, size_t n) override;
     size_t available(void) override;
-    void register_callback(Newton::SerialDataCallback* callback) override;
 
 private:
     unsigned handle_;

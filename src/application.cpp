@@ -14,28 +14,23 @@ void Application::setup(void)
     Serial.begin(BAUD_RATE);
     LOG_DEBUG("Setting up...");
     sensor_ = make_force_sensor();
-    serial_handle_ = new Newton::ArduinoSerialHandle(tx_queue_, rx_queue_);
-    node_ = new Newton::Node(*serial_handle_, *sensor_);
+    node_ = new Newton::Node(tx_queue_, rx_queue_, *sensor_);
     sensor_->begin();
 }
 
 void Application::handle_received(int n_bytes)
 {
-    Serial.print("Received ");
-    Serial.print(n_bytes);
-    Serial.println(" bytes!");
+    Serial.println("Handling received data...");
     // queue the data in the receive buffer...
     for (int i = 0; i < n_bytes; ++i)
     {
         rx_queue_.push(Wire.read());
     }
-    // notify consumers...
-    serial_handle_->notify();
 }
 
 void Application::handle_requested()
 {
-    Serial.println("Data requested!");
+    LOG_DEBUG("Data requested!");
     // dispatch any data queued in the transmit buffer...
     while (!tx_queue_.empty())
     {

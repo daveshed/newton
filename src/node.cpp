@@ -67,7 +67,7 @@ void Node::update(void)
     };
     if (is_measuring())
     {
-        LOG_DEBUG("Force is above threshold: " << reading_.force);
+        LOG_DEBUG("Force is above threshold.");
         buffer_.push(reading_);
     }
     // 2. handle serial data...

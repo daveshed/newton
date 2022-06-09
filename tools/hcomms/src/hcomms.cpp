@@ -1,45 +1,49 @@
 // stdlib
-#include <cstdint>
-#include <iostream>
-#include <memory>
-// third-party
-#include <boost/python.hpp>
+#include <cstring>
+#include <vector>
 // internal
-#include "hostcomms.h"
-#include "i2c_serial.h"
+#include "hcomms.h"
+#include "interfaces.h"
+#include "logging.h"
 
-using namespace boost::python;
+using namespace Newton;
 
-class InterfaceWrapper {
-public:
-    InterfaceWrapper(uint8_t address)
-    : serial_handle_(1, address)
-    , host_(serial_handle_)
-    { }
-    void calibrate(float slope, float intercept) {
-        Newton::Calibration_t calibration = {slope, intercept};
-        host_.calibrate(calibration);
-    }
-    Newton::Measurement_t get_reading(void) {
-        return host_.get_reading();
-    }
-private:
-    HostComms::I2cSerial serial_handle_;
-    Newton::HostInterface host_;
-};
+HostInterface::HostInterface(SerialHandle& s) : serial_(s)
+{ }
 
-// Build a shared object with this exact name
-BOOST_PYTHON_MODULE(hcomms_ext)
+void HostInterface::calibrate(Calibration_t calibration) const
 {
-    class_<Newton::Measurement_t>("Measurement", no_init)
-        .def_readonly("timestamp", &Newton::Measurement_t::timestamp)
-        .def_readonly("force", &Newton::Measurement_t::force)
-        .def_readonly("raw_data", &Newton::Measurement_t::raw_data)
-        .def_readonly("checksum", &Newton::Measurement_t::checksum)
-    ;
+    LOG_DEBUG("##### Host issuing calibration...");
+    // command type
+    serial_.transmit((uint8_t)Command::CALIBRATE);
+    // payload
+    serial_.transmit((const uint8_t*)&calibration, sizeof(Calibration_t));
+}
 
-    class_<InterfaceWrapper, boost::noncopyable>("HostInterface", init<uint8_t>())
-        .def("calibrate", &InterfaceWrapper::calibrate)
-        .def("get_reading", &InterfaceWrapper::get_reading)
-    ;
+Measurement_t HostInterface::get_reading(void) const
+{
+    LOG_DEBUG("##### Host getting reading...");
+    // 1. issue the command...
+    serial_.transmit((uint8_t)Command::GET_READING);
+    // 2. wait for the response - this needs consideration. What if the data
+    //    from the target takes a long time to come? Will we just let timeout
+    //    exceptions raise?
+    Measurement_t result = {};
+    serial_.receive((uint8_t*)&result, sizeof(Measurement_t));
+    return result;
+}
+
+std::vector<Measurement_t> HostInterface::read_stored(void) const
+{
+    LOG_DEBUG("##### Host reading stored...");
+    serial_.transmit((uint8_t)Command::READ_STORED);
+    uint8_t count = serial_.receive();
+    std::vector<Measurement_t> result;
+    for (int i = 0; i < count; ++i)
+    {
+        Measurement_t reading = {};
+        serial_.receive((uint8_t*)&result, sizeof(Measurement_t));
+        result.push_back(reading);
+    }
+    return result;
 }

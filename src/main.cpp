@@ -1,5 +1,6 @@
 #include <Wire.h>
 
+#include "ArduinoUtils.h"
 #include "application.h"
 
 const uint8_t I2C_ADDRESS = 0x11;

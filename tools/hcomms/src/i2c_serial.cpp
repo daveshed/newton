@@ -127,8 +127,3 @@ size_t I2cSerial::available(void)
     // method not supported with pigpio library
     throw std::runtime_error("Can't do this on I2C");
 }
-
-void I2cSerial::register_callback(Newton::SerialDataCallback* callback)
-{
-    (void)callback;
-}

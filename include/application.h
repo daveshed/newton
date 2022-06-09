@@ -3,7 +3,7 @@
 
 #include "buffer.h"
 #include "interfaces.h"
-#include "serial.h"
+#include "node.h"
 
 namespace Newton {
 /*
@@ -23,10 +23,9 @@ public:
     void handle_requested(void);
 private:
     Sensor* sensor_;
-    ArduinoSerialHandle* serial_handle_;
     Node* node_;
-    FifoBuffer tx_queue_;
-    FifoBuffer rx_queue_;
+    FifoBuffer<uint8_t> tx_queue_;
+    FifoBuffer<uint8_t> rx_queue_;
 };
 
 }; // namespace

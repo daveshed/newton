@@ -8,6 +8,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
         find_library(PYTHON3 NAMES python3 python3.9)
         find_library(BOOST_PYTHON3 NAMES boost_python3 boost_python39)
         add_library(hcomms_ext SHARED
+            src/bindings.cpp
             src/hcomms.cpp
             src/i2c_serial.cpp
         )
@@ -21,7 +22,6 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
         )
         target_link_libraries(hcomms_ext
             ${BOOST_PYTHON3}
-            newton_host
             ${PIGPIO}
             ${PYTHON3}
         )
