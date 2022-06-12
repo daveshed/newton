@@ -4,3 +4,6 @@
 [submodule "third-party/HX711"]
 	path = third-party/HX711
 	url = https://github.com/bogde/HX711.git
+[submodule "third-party/cores"]
+	path = third-party/cores
+	url = https://github.com/PaulStoffregen/cores.git
