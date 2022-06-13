@@ -1,15 +1,11 @@
 # Build all third-party libraries
-if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
+if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "ARM")
     # Library build for the target...
-    generate_arduino_library(HX711
-        SRCS HX711/src/HX711.cpp
-        HDRS HX711/src/HX711.h
-        BOARD uno
-    )
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    add_library(HX711 HX711/src/HX711.cpp)
+elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES ${CMAKE_HOST_SYSTEM_PROCESSOR})
     if(UNIT_TESTS)
         # add_subdirectory(cpputest)
     endif()
 else()
-    message(FATAL_ERROR "Unrecognised system '${CMAKE_SYSTEM_NAME}'")
+    message(FATAL_ERROR "Unrecognised system '${CMAKE_SYSTEM_PROCESSOR}'")
 endif()

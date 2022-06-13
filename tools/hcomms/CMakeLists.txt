@@ -1,5 +1,5 @@
 # Build our pyhon->c++ bindings for serial comms on the host
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+if(${CMAKE_SYSTEM_PROCESSOR} MATCHES ${CMAKE_HOST_SYSTEM_PROCESSOR})
     find_library(PIGPIO NAMES pigpiod_if)
     if(${PIGPIO} MATCHES "NOTFOUND")
         # Skip this build so we can still compile on Linux for unit testing only

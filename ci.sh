@@ -4,8 +4,7 @@ set -ueo pipefail
 PROJECT_ROOT=$(dirname $(realpath $0))
 BUILD_ABSPATH=${PROJECT_ROOT}/build
 CUSTOM_INCLUDE_PATHS=/usr/include/python3.9/
-TOOLCHAIN_BASEPATH=${PROJECT_ROOT}/third-party/arduino-cmake/cmake
-TOOLCHAIN_ABSPATH=${TOOLCHAIN_BASEPATH}/ArduinoToolchain.cmake
+TOOLCHAIN_ABSPATH=${PROJECT_ROOT}/arm-toolchain.cmake
 HARDWARE_PLATFORM_PATH=/usr/share/arduino/hardware/arduino/avr
 
 function clean {
@@ -32,9 +31,7 @@ function build-fw {
     echo "########################## BUILDING FW ##############################"
     echo ${TOOLCHAIN_ABSPATH}
     cd ${BUILD_ABSPATH} && \
-        HARDWARE_PLATFORM_PATH=${HARDWARE_PLATFORM_PATH} cmake \
-            -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_ABSPATH} \
-            -DARDUINO_FOUND:BOOL=False \
+            cmake -DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_ABSPATH} \
             ../ && make
 }
 
@@ -66,6 +63,6 @@ function upload-release {
 # run-unit-tests
 clean
 build-fw
-upload-integration-test
+# upload-integration-test
 # run-hw-tests
 # upload-release

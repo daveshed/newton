@@ -1,4 +1,4 @@
-if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
+if(${CMAKE_SYSTEM_NAME} MATCHES "ARM")
     # Libraries...
     generate_arduino_library(i2c
         SRCS ${ARDUINO_LIBRARIES_PATH}/Wire/src/Wire.cpp
