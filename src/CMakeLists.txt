@@ -1,40 +1,39 @@
-if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
+if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "ARM")
     # Libraries...
-    generate_arduino_library(i2c
-        SRCS ${ARDUINO_LIBRARIES_PATH}/Wire/src/Wire.cpp
-             ${ARDUINO_LIBRARIES_PATH}/Wire/src/utility/twi.c
-        BOARD uno
+    add_library(i2c
+        ${ARDUINO_LIBRARIES_PATH}/Wire/src/Wire.cpp
+        ${ARDUINO_LIBRARIES_PATH}/Wire/src/utility/twi.c
     )
-    generate_arduino_library(sensor_hx711
-        SRCS sensor.cpp
-        LIBS HX711
-        BOARD uno
-    )
-    # Firmware executables...
-    generate_arduino_firmware(test_fw
-        SRCS application.cpp
-             assert.cpp
-             main.cpp
-             node.cpp
-        LIBS sensor_stub i2c
-        BOARD uno
-        PORT /dev/ttyACM0
-    )
-    generate_arduino_firmware(release_fw
-        SRCS application.cpp
-             assert.cpp
-             main.cpp
-             node.cpp
-        LIBS sensor_hx711 i2c
-        BOARD uno
-        PORT /dev/ttyACM0
-    )
-    include_directories(
-        ../include
-        ../mocks
-        ../third-party/HX711/src
-        ${ARDUINO_LIBRARIES_PATH}/Wire/src
-    )
+    # generate_arduino_library(sensor_hx711
+    #     SRCS sensor.cpp
+    #     LIBS HX711
+    #     BOARD uno
+    # )
+    # # Firmware executables...
+    # generate_arduino_firmware(test_fw
+    #     SRCS application.cpp
+    #          assert.cpp
+    #          main.cpp
+    #          node.cpp
+    #     LIBS sensor_stub i2c
+    #     BOARD uno
+    #     PORT /dev/ttyACM0
+    # )
+    # generate_arduino_firmware(release_fw
+    #     SRCS application.cpp
+    #          assert.cpp
+    #          main.cpp
+    #          node.cpp
+    #     LIBS sensor_hx711 i2c
+    #     BOARD uno
+    #     PORT /dev/ttyACM0
+    # )
+    # include_directories(
+    #     ../include
+    #     ../mocks
+    #     ../third-party/HX711/src
+    #     ${ARDUINO_LIBRARIES_PATH}/Wire/src
+    # )
 else()
     # 1. Build library for unit testing...
     add_library(newton_target

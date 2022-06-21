@@ -1,4 +1,4 @@
-if(${CMAKE_SYSTEM_NAME} MATCHES "Arduino")
+if(${CMAKE_SYSTEM_NAME} MATCHES "ARM")
     # Stubbed hardware for Arduino integration tests...
     generate_arduino_library(sensor_stub
         SRCS sensor.cpp
