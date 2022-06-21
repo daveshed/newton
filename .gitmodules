@@ -7,3 +7,6 @@
 [submodule "third-party/cores"]
 	path = third-party/cores
 	url = https://github.com/PaulStoffregen/cores.git
+[submodule "third-party/ArduinoCore-avr"]
+	path = third-party/ArduinoCore-avr
+	url = https://github.com/arduino/ArduinoCore-avr.git
