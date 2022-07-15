@@ -1,20 +1,20 @@
 if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "ARM")
     # Libraries...
-    add_library(i2c
-        ${ARDUINO_LIBRARIES_PATH}/Wire/src/Wire.cpp
-        ${ARDUINO_LIBRARIES_PATH}/Wire/src/utility/twi.c
+    add_library(sensor_hx711 sensor.cpp)
+    target_link_libraries(sensor_hx711 HX711)
+    target_include_directories(
+        sensor_hx711 PUBLIC
+        ${THIRD_PARTY_DIR}/HX711/src
+        ${CMAKE_SOURCE_DIR}/include
     )
-    # generate_arduino_library(sensor_hx711
-    #     SRCS sensor.cpp
-    #     LIBS HX711
-    #     BOARD uno
+    # Firmware executables...
+    # add_executable(test_fw
+    #     application.cpp
+    #     assert.cpp
+    #     main.cpp
+    #     node.cpp
     # )
-    # # Firmware executables...
-    # generate_arduino_firmware(test_fw
-    #     SRCS application.cpp
-    #          assert.cpp
-    #          main.cpp
-    #          node.cpp
+    # target_link_libraries()
     #     LIBS sensor_stub i2c
     #     BOARD uno
     #     PORT /dev/ttyACM0

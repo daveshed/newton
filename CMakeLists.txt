@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 project(Newton C CXX)
 set(CMAKE_CXX_STANDARD 11)
-set(TEENSY_SOURCE_DIR ${CMAKE_SOURCE_DIR}/third-party/cores/teensy4/)
+set(THIRD_PARTY_DIR ${CMAKE_SOURCE_DIR}/third-party)
+set(TEENSY_SOURCE_DIR ${THIRD_PARTY_DIR}/cores/teensy4/)
+set(ARDUINO_LIBRARIES_PATH ${THIRD_PARTY_DIR}/ArduinoCore-avr/libraries)
 option(UNIT_TESTS "Build unit tests" ON)
 
 if(${CMAKE_SYSTEM_PROCESSOR} MATCHES ${CMAKE_HOST_SYSTEM_PROCESSOR})

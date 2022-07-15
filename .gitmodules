@@ -10,3 +10,6 @@
 [submodule "third-party/ArduinoCore-avr"]
 	path = third-party/ArduinoCore-avr
 	url = https://github.com/arduino/ArduinoCore-avr.git
+[submodule "third-party/teensy4_i2c"]
+	path = third-party/teensy4_i2c
+	url = https://github.com/Richard-Gemmell/teensy4_i2c.git
