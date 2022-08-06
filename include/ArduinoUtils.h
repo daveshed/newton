@@ -1,5 +1,5 @@
 #pragma once
-#ifdef __AVR__
+#ifdef __arm__
     #include "Arduino.h"
     // had to reimplement code from avr/include/assert.h - handler wasn't being called.
     #define ASSERT(e) ((e) ? (void)0 : __assert(__func__, __FILE__, __LINE__, #e))

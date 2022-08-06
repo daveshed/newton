@@ -1,5 +1,5 @@
 #include "ArduinoUtils.h"
-#include <Wire.h>
+#include <i2c_driver_wire.h>
 
 #include "application.h"
 #include "interfaces.h"

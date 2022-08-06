@@ -1,21 +1,21 @@
-#include <Wire.h>
+#include <i2c_driver_wire.h>
 
 #include "ArduinoUtils.h"
-#include "application.h"
+// #include "application.h"
 
 const uint8_t I2C_ADDRESS = 0x11;
-Newton::Application app;
+// Newton::Application app;
 
 void setup(void)
 {
-    app.setup();
+    // app.setup();
     // initialise i2c comms...
     Wire.begin(I2C_ADDRESS);
-    Wire.onReceive([](int n){app.handle_received(n);});
-    Wire.onRequest([](){app.handle_requested();});
+    // Wire.onReceive([](int n){app.handle_received(n);});
+    // Wire.onRequest([](){app.handle_requested();});
 }
 
 void loop(void)
 {
-    app.loop();
+    // app.loop();
 }
