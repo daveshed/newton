@@ -2,16 +2,18 @@
 
 1. install dependencies...
 * `cmake`
-* `arduino` - contains SDK
-* `arduino-avr-core` - contains more avr tools
 * `Boost` - required for building python extensions
 * `pigpio` - required for python-cpp bindings
+* `teensy_loader_cli` - required for loading hex files onto the target.
 
-2. [Optional] You can set the SDK path for cmake if necessary. The default path is given below so you shouldn't need to do this...
-```console
-$ cmake -DARDUINO_SDK_PATH=/usr/share/arduino/ ../
+2. To flash hex files onto the target you will need the `teensy_loader_cli`. Follow installation guidelines [here](https://github.com/PaulStoffregen/teensy_loader_cli). Note that you will may need to compile `teensy_loader_cli` from source and it requires `libusb-0.1.x` as it imports `usb.h` (see [here](https://stackoverflow.com/a/52443692/18890664)). Ensure that you've installed the correct library and header/development files. For example on a `debian` host, this will mean installing `libusb-dev`.
+
+You will also need to create a `udev` rule to mount the device with suitable read/write permissions...
 ```
-The hardware platform path may also need to be set. This is demonstrated in the ci.sh file. You can do it with the `register_hardware_platform` directive.
+# /etc/udev/rules.d/99-teensy.rules
+
+KERNEL=="hiddev*", ATTRS{idVendor}=="16c0", ATTRS{idProduct}=="04*", MODE:="0666"
+```
 
 3. Python-cpp bindings rely on the the pigpio library. Once you've installed this, you will have to enable the pigpio daemon '`pigpiod`' by doing the following...
 ```console
