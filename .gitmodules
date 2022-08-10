@@ -13,3 +13,6 @@
 [submodule "third-party/teensy4_i2c"]
 	path = third-party/teensy4_i2c
 	url = https://github.com/Richard-Gemmell/teensy4_i2c.git
+[submodule "third-party/teensy_loader_cli"]
+	path = third-party/teensy_loader_cli
+	url = https://github.com/PaulStoffregen/teensy_loader_cli.git
