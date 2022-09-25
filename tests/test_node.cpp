@@ -8,7 +8,6 @@
 #include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
 // code under test
-#include "hostcomms.h"
 #include "interfaces.h"
 #include "mocks.h"
 #include "node.h"
@@ -335,6 +334,7 @@ TEST(SerialCommsTestGroup, TestReadsDataFromCommandShouldQueryMockSensor)
     Newton::ResponsePacket expected_response = READ_OK_RESPONSE(expected_measurement);
     CHECK_EQUAL(expected_response, actual_response);
 }
+#if 0
 
 TEST(SerialCommsTestGroup, TestForcesBelowThresholdNoRecordedDataAvailable)
 {
@@ -420,3 +420,4 @@ TEST(SerialCommsTestGroup, TestRejectsReadStoredCommandWhenRecording)
     // 3. Compare and assert...
     CHECK_EQUAL(expected_response, actual_response);
 }
+#endif

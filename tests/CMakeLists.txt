@@ -1,5 +1,5 @@
 # Unit test build only
-if((${CMAKE_SYSTEM_PROCESSOR} MATCHES ${CMAKE_HOST_SYSTEM_PROCESSOR}) AND UNIT_TESTS)
+if(${CMAKE_SYSTEM_PROCESSOR} MATCHES ${CMAKE_HOST_SYSTEM_PROCESSOR})
     # Test Runner executable...
     add_executable(test_runner
         runner.cpp

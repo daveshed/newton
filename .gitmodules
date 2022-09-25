@@ -1,15 +1,9 @@
-[submodule "third-party/cpputest"]
-	path = third-party/cpputest
-	url = https://github.com/cpputest/cpputest.git
 [submodule "third-party/HX711"]
 	path = third-party/HX711
 	url = https://github.com/bogde/HX711.git
 [submodule "third-party/cores"]
 	path = third-party/cores
 	url = https://github.com/PaulStoffregen/cores.git
-[submodule "third-party/ArduinoCore-avr"]
-	path = third-party/ArduinoCore-avr
-	url = https://github.com/arduino/ArduinoCore-avr.git
 [submodule "third-party/teensy4_i2c"]
 	path = third-party/teensy4_i2c
 	url = https://github.com/Richard-Gemmell/teensy4_i2c.git

@@ -20,7 +20,7 @@ void Application::setup(void)
 
 void Application::handle_received(int n_bytes)
 {
-    Serial.println("Handling received data...");
+    LOG_DEBUG("Handling received data...");
     // queue the data in the receive buffer...
     for (int i = 0; i < n_bytes; ++i)
     {

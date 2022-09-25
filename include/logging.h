@@ -1,7 +1,7 @@
 #ifndef LOGGING_H
 #define LOGGING_H
 
-#ifdef __AVR__
+#ifdef __arm__
     #include "ArduinoUtils.h"
     #define LOG_DEBUG(x) (Serial.println(x))
 #else

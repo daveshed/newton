@@ -2,7 +2,7 @@ set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR ARM)
 
 set(TOOLCHAIN_PREFIX arm-none-eabi-)
-set(ARM_TOOLCHAIN_DIR "/home/dmohamad/dev/gcc-arm-11.2-2022.02-aarch64-arm-none-eabi/bin")
+set(ARM_TOOLCHAIN_DIR "/home/dmohamad/tools/gcc-arm-none-eabi-10.3-2021.10/bin")
 
 # Without that flag CMake is not able to pass test compilation check
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
